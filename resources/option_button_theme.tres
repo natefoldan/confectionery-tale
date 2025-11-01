@@ -1,0 +1,5 @@
+[gd_resource type="Theme" format=3 uid="uid://bm07r5h2dqrom"]
+
+[resource]
+MenuButton/constants/cursor_shape = 2
+OptionButton/constants/cursor_shape = 2

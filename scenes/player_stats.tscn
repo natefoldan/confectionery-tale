@@ -1,0 +1,501 @@
+[gd_scene load_steps=4 format=3 uid="uid://2u6r700pxn5h"]
+
+[ext_resource type="Texture2D" uid="uid://rb2ss10c0d10" path="res://assets/panel-teal-86dfe9-436x471.png" id="1_ti6ne"]
+[ext_resource type="Script" uid="uid://cipe0vf6eyf5o" path="res://scripts/PlayerStats.cs" id="2_h5p2b"]
+[ext_resource type="PackedScene" uid="uid://tjtxme4y7ds3" path="res://scenes/stat_tooltip.tscn" id="3_ti6ne"]
+
+[node name="PlayerStats" type="TextureRect"]
+offset_right = 436.0
+offset_bottom = 471.0
+texture = ExtResource("1_ti6ne")
+script = ExtResource("2_h5p2b")
+
+[node name="Level" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -146.5
+offset_top = -35.0
+offset_right = 146.5
+offset_bottom = -11.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 32
+text = "KANE - LEVEL 100"
+horizontal_alignment = 1
+vertical_alignment = 1
+
+[node name="Stats" type="GridContainer" parent="."]
+layout_mode = 0
+offset_left = 15.0
+offset_top = 15.0
+offset_right = 418.0
+offset_bottom = 466.0
+mouse_filter = 2
+
+[node name="Damage" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Damage"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Damage: 999.9k"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Damage" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="Health" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Health"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Health: 999.9k"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Health" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="Shield" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Shield"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Shield: 999.9k"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Shield" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="ShieldRegen" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/ShieldRegen"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Shield Regen: 1/sec"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/ShieldRegen" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="Pierce" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Pierce"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Pierce: 999.9k"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Pierce" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="CritChance" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/CritChance"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Crit Chance: 100%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/CritChance" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="CritDamage" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/CritDamage"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Crit Damage: 999.9k%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/CritDamage" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="Speed" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Speed"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Move Speed: 1000"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Speed" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="Range" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Range"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Collect Range: 999.9k"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Range" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="ExtractDrop" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/ExtractDrop"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Extract Drop: 999.9k%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/ExtractDrop" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="SucroseDrop" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/SucroseDrop"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Sucrose Drop: 999.9k%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/SucroseDrop" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="ExpDrop" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/ExpDrop"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Exp Gain: 999.9k%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/ExpDrop" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="Slow" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Slow"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Slow: 10 sec"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Slow" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="Melt" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/Melt"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Melt Damage: 10%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/Melt" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="SlowResist" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/SlowResist"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Slow Resist: 100%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/SlowResist" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[node name="MeltResist" type="Control" parent="Stats"]
+custom_minimum_size = Vector2(350, 24)
+layout_mode = 2
+mouse_default_cursor_shape = 2
+
+[node name="RichTextLabel" type="RichTextLabel" parent="Stats/MeltResist"]
+layout_mode = 1
+anchors_preset = -1
+anchor_right = 0.943
+anchor_bottom = 1.0
+offset_right = 69.95
+grow_horizontal = 2
+grow_vertical = 2
+mouse_filter = 2
+theme_override_colors/default_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/normal_font_size = 22
+bbcode_enabled = true
+text = "Melt Resit: 100%"
+scroll_active = false
+vertical_alignment = 1
+
+[node name="StatTooltip" parent="Stats/MeltResist" instance=ExtResource("3_ti6ne")]
+visible = false
+layout_mode = 0
+offset_top = 28.0
+offset_bottom = 128.0
+
+[connection signal="mouse_entered" from="Stats/Damage" to="." method="MouseEnterStat" binds= ["Damage"]]
+[connection signal="mouse_exited" from="Stats/Damage" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/Health" to="." method="MouseEnterStat" binds= ["Health"]]
+[connection signal="mouse_exited" from="Stats/Health" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/Shield" to="." method="MouseEnterStat" binds= ["Shield"]]
+[connection signal="mouse_exited" from="Stats/Shield" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/ShieldRegen" to="." method="MouseEnterStat" binds= ["ShieldRegen"]]
+[connection signal="mouse_exited" from="Stats/ShieldRegen" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/Pierce" to="." method="MouseEnterStat" binds= ["Pierce"]]
+[connection signal="mouse_exited" from="Stats/Pierce" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/CritChance" to="." method="MouseEnterStat" binds= ["CritChance"]]
+[connection signal="mouse_exited" from="Stats/CritChance" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/CritDamage" to="." method="MouseEnterStat" binds= ["CritDamage"]]
+[connection signal="mouse_exited" from="Stats/CritDamage" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/Speed" to="." method="MouseEnterStat" binds= ["Speed"]]
+[connection signal="mouse_exited" from="Stats/Speed" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/Range" to="." method="MouseEnterStat" binds= ["Range"]]
+[connection signal="mouse_exited" from="Stats/Range" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/ExtractDrop" to="." method="MouseEnterStat" binds= ["ExtractDrop"]]
+[connection signal="mouse_exited" from="Stats/ExtractDrop" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/SucroseDrop" to="." method="MouseEnterStat" binds= ["SucroseDrop"]]
+[connection signal="mouse_exited" from="Stats/SucroseDrop" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/ExpDrop" to="." method="MouseEnterStat" binds= ["ExpDrop"]]
+[connection signal="mouse_exited" from="Stats/ExpDrop" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/Slow" to="." method="MouseEnterStat" binds= ["Slow"]]
+[connection signal="mouse_exited" from="Stats/Slow" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/Melt" to="." method="MouseEnterStat" binds= ["Melt"]]
+[connection signal="mouse_exited" from="Stats/Melt" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/SlowResist" to="." method="MouseEnterStat" binds= ["SlowResist"]]
+[connection signal="mouse_exited" from="Stats/SlowResist" to="." method="MouseExitStat"]
+[connection signal="mouse_entered" from="Stats/MeltResist" to="." method="MouseEnterStat" binds= ["MeltResist"]]
+[connection signal="mouse_exited" from="Stats/MeltResist" to="." method="MouseExitStat"]

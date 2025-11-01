@@ -1,0 +1,16 @@
+[remap]
+
+importer="bitmap"
+type="BitMap"
+uid="uid://dt7i51boxhi3f"
+path="res://.godot/imported/radial-one-bmp.png-b6d697f630d7f7d9366c25c162c6d779.res"
+
+[deps]
+
+source_file="res://assets/radial-one-bmp.png"
+dest_files=["res://.godot/imported/radial-one-bmp.png-b6d697f630d7f7d9366c25c162c6d779.res"]
+
+[params]
+
+create_from=1
+threshold=0.5

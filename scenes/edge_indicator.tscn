@@ -1,0 +1,19 @@
+[gd_scene load_steps=4 format=3 uid="uid://d24n2nk025ys7"]
+
+[ext_resource type="Script" uid="uid://54pv0tl41bgk" path="res://scripts/EdgeIndicator.cs" id="1_66c0a"]
+[ext_resource type="Texture2D" uid="uid://ckowkha21uu34" path="res://assets/arrow-single-44px.png" id="2_nf6df"]
+[ext_resource type="Texture2D" uid="uid://c0trb4m4bdawp" path="res://assets/sprites/extract-purple.png" id="3_nf6df"]
+
+[node name="EdgeIndicator" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+script = ExtResource("1_66c0a")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_nf6df")
+
+[node name="ObjectSprite" type="Sprite2D" parent="Sprite2D"]
+position = Vector2(-60, 0)
+texture = ExtResource("3_nf6df")

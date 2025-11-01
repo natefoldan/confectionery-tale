@@ -1,0 +1,44 @@
+[gd_resource type="Resource" script_class="BaseExtract" load_steps=3 format=3 uid="uid://cl4d46ccli20g"]
+
+[ext_resource type="Script" uid="uid://b08i18ck2rrgn" path="res://scripts/BaseExtract.cs" id="1_75ru0"]
+[ext_resource type="Texture2D" uid="uid://ujfdkqwkbtsd" path="res://assets/sprites/extract-yellow.png" id="1_qkwqv"]
+
+[resource]
+script = ExtResource("1_75ru0")
+DisplayTexture = ExtResource("1_qkwqv")
+Id = ""
+Name = ""
+DropType = 0
+CurrentOwned = 0
+OtherDrop = false
+InInventory = false
+Equipped = false
+ModName = ""
+ModTier = 0
+ModQuality = 0.0
+ModDropChance = 0
+ModBaseDamage = 0
+ModBasePierce = 0
+ModBaseCritChance = 0
+ModBaseCritDamage = 0
+ModBaseShield = 0
+ModBaseShieldRegen = 0
+ModBaseHealth = 0
+ModBasePickupRange = 0
+ModBaseSpeed = 0
+ModBaseExtractDrop = 0
+ModBaseSucroseDrop = 0
+ModBaseExpGain = 0
+ModBaseDamageQuality = 0.0
+ModBasePierceQuality = 0.0
+ModBaseCritChanceQuality = 0.0
+ModBaseCritDamageQuality = 0.0
+ModBaseShieldQuality = 0.0
+ModBaseShieldRegenQuality = 0.0
+ModBaseHealthQuality = 0.0
+ModBasePickupRangeQuality = 0.0
+ModBaseSpeedQuality = 0.0
+ModBaseExtractDropQuality = 0.0
+ModBaseSucroseDropQuality = 0.0
+ModBaseExpGainQuality = 0.0
+metadata/_custom_type_script = "uid://b08i18ck2rrgn"

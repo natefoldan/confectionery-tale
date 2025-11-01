@@ -1,0 +1,40 @@
+[gd_scene load_steps=5 format=3 uid="uid://dxublpffapbdy"]
+
+[ext_resource type="Texture2D" uid="uid://ci301aejec8gj" path="res://assets/box-blue-70x70-concave.png" id="1_nbfkf"]
+[ext_resource type="Script" uid="uid://ba8t42keo1m0x" path="res://scripts/DistillerySlot.cs" id="2_s4263"]
+[ext_resource type="Texture2D" uid="uid://ujfdkqwkbtsd" path="res://assets/sprites/extract-yellow.png" id="3_63vn5"]
+[ext_resource type="PackedScene" uid="uid://duqhq6chjjm8l" path="res://scenes/tooltip_scene.tscn" id="5_s4263"]
+
+[node name="Slot" type="TextureRect"]
+offset_right = 78.0
+offset_bottom = 78.0
+texture = ExtResource("1_nbfkf")
+script = ExtResource("2_s4263")
+
+[node name="Item" type="TextureButton" parent="."]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -29.0
+offset_top = -29.0
+offset_right = 29.0
+offset_bottom = 29.0
+grow_horizontal = 2
+grow_vertical = 2
+texture_normal = ExtResource("3_63vn5")
+stretch_mode = 3
+
+[node name="Tooltip" parent="." instance=ExtResource("5_s4263")]
+visible = false
+layout_mode = 0
+offset_left = 37.0
+offset_top = -163.0
+offset_right = 437.0
+offset_bottom = 37.0
+
+[connection signal="mouse_entered" from="Item" to="." method="MouseEnterItem"]
+[connection signal="mouse_exited" from="Item" to="." method="MouseExitItem"]
+[connection signal="pressed" from="Item" to="." method="ClickItem"]

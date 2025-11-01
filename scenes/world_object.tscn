@@ -1,0 +1,82 @@
+[gd_scene load_steps=4 format=3 uid="uid://cs5jwh3o7tq8q"]
+
+[ext_resource type="Script" uid="uid://u874v45tna6d" path="res://scripts/WorldObject.cs" id="1_sa2ys"]
+[ext_resource type="Texture2D" uid="uid://81qui1xxewaw" path="res://assets/popup-two.png" id="2_8uidd"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_f5chs"]
+radius = 54.00926
+
+[node name="WorldObject" type="StaticBody2D" groups=["worldobject"]]
+collision_layer = 128
+script = ExtResource("1_sa2ys")
+metadata/_edit_group_ = true
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+
+[node name="InteractArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="InteractArea"]
+shape = SubResource("CircleShape2D_f5chs")
+
+[node name="CollisionArea" type="StaticBody2D" parent="."]
+collision_layer = 128
+collision_mask = 7
+
+[node name="CrackingTimerLabel" type="Label" parent="."]
+visible = false
+z_index = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -173.5
+offset_top = -250.0
+offset_right = 173.5
+offset_bottom = -122.0
+grow_horizontal = 2
+theme_override_colors/font_outline_color = Color(0, 0, 0, 1)
+theme_override_constants/outline_size = 9
+theme_override_font_sizes/font_size = 128
+text = "99:99"
+vertical_alignment = 1
+
+[node name="Popup" type="MarginContainer" parent="."]
+visible = false
+offset_right = 175.79999
+offset_bottom = 28.0
+scale = Vector2(5, 5)
+size_flags_horizontal = 4
+size_flags_vertical = 4
+
+[node name="NinePatchRect" type="NinePatchRect" parent="Popup"]
+layout_mode = 2
+texture = ExtResource("2_8uidd")
+region_rect = Rect2(2.3032074, 0.35533714, 115.289444, 119.28915)
+patch_margin_left = 6
+patch_margin_top = 6
+patch_margin_right = 6
+patch_margin_bottom = 6
+axis_stretch_horizontal = 1
+axis_stretch_vertical = 1
+
+[node name="MarginContainer" type="MarginContainer" parent="Popup"]
+layout_mode = 2
+theme_override_constants/margin_left = 12
+theme_override_constants/margin_top = 12
+theme_override_constants/margin_right = 12
+theme_override_constants/margin_bottom = 12
+
+[node name="CenterContainer" type="CenterContainer" parent="Popup/MarginContainer"]
+layout_mode = 2
+
+[node name="Label" type="Label" parent="Popup/MarginContainer/CenterContainer"]
+custom_minimum_size = Vector2(150, 0)
+layout_mode = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "popup text"
+horizontal_alignment = 1
+vertical_alignment = 1
+autowrap_mode = 3
+
+[connection signal="area_entered" from="InteractArea" to="." method="PlayerEnteredRange"]
+[connection signal="area_exited" from="InteractArea" to="." method="PlayerExitedRange"]

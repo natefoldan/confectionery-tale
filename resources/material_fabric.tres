@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BaseMaterial" load_steps=3 format=3 uid="uid://5mdkt2qo0yct"]
+
+[ext_resource type="Script" uid="uid://lkxh633fdqwo" path="res://scripts/BaseMaterial.cs" id="1_hndvs"]
+[ext_resource type="Texture2D" uid="uid://dp8u662auc5te" path="res://assets/sprites/material-coat.png" id="1_n8it0"]
+
+[resource]
+script = ExtResource("1_hndvs")
+DisplayTexture = ExtResource("1_n8it0")
+Id = "materialCoat"
+Name = "Fabric"
+CurrentOwned = 0.0
+TotalFound = 0.0
+InInventory = false
+metadata/_custom_type_script = "uid://lkxh633fdqwo"

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://cw3ti3q5t6qby"]
+
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_sjg35"]
+[ext_resource type="Texture2D" uid="uid://cyj0ctdhprj8u" path="res://assets/sprites/enemy-chocolate-dark-frame.png" id="1_wgpt7"]
+[ext_resource type="Resource" uid="uid://cv6ey1a4gjvjs" path="res://resources/material_essence_soft.tres" id="2_k14ci"]
+
+[resource]
+script = ExtResource("1_sjg35")
+DisplayTexture = ExtResource("1_wgpt7")
+Id = "enemyDarkChocolate"
+Name = "Dark Chocolate"
+SpawnArea = 5
+DropType = 2
+Rank = 15
+animation = "darkchocolate"
+ItemDrops = Array[Resource]([ExtResource("2_k14ci")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

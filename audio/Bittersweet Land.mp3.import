@@ -1,0 +1,19 @@
+[remap]
+
+importer="mp3"
+type="AudioStreamMP3"
+uid="uid://c04xxm3odcmoy"
+path="res://.godot/imported/Bittersweet Land.mp3-808fe7ae1fba3f1acc0046834bc9c0bb.mp3str"
+
+[deps]
+
+source_file="res://audio/Bittersweet Land.mp3"
+dest_files=["res://.godot/imported/Bittersweet Land.mp3-808fe7ae1fba3f1acc0046834bc9c0bb.mp3str"]
+
+[params]
+
+loop=true
+loop_offset=0.0
+bpm=0.0
+beat_count=0
+bar_beats=4

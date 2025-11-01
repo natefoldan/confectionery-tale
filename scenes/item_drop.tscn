@@ -1,0 +1,31 @@
+[gd_scene load_steps=9 format=3 uid="uid://jk2eudu66rpo"]
+
+[ext_resource type="Script" uid="uid://bp5pj11ixfcl1" path="res://scripts/ItemDrop.cs" id="1_gvv6n"]
+[ext_resource type="Texture2D" uid="uid://ujfdkqwkbtsd" path="res://assets/sprites/extract-yellow.png" id="2_cff6v"]
+[ext_resource type="Texture2D" uid="uid://dhfbit5so0kc3" path="res://assets/sprites/extract-green.png" id="3_7l1nb"]
+[ext_resource type="Texture2D" uid="uid://dqugsl85n1bst" path="res://assets/sprites/extract-blue.png" id="4_1fkrt"]
+[ext_resource type="Texture2D" uid="uid://c0trb4m4bdawp" path="res://assets/sprites/extract-purple.png" id="5_r7e8e"]
+[ext_resource type="Texture2D" uid="uid://bfjwmajc6l6dy" path="res://assets/sprites/extract-orange.png" id="6_cff6v"]
+[ext_resource type="Texture2D" uid="uid://ylcir8kcowgw" path="res://assets/sprites/extract-pink.png" id="6_ek6tx"]
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_gvv6n"]
+radius = 97.4166
+
+[node name="ItemDrop" type="RigidBody2D" groups=["drops"]]
+collision_layer = 32
+collision_mask = 0
+linear_damp = 10.0
+script = ExtResource("1_gvv6n")
+tierOneExtractTexture = ExtResource("2_cff6v")
+tierTwoExtractTexture = ExtResource("3_7l1nb")
+tierThreeExtractTexture = ExtResource("4_1fkrt")
+tierFourExtractTexture = ExtResource("5_r7e8e")
+tierFiveExtractTexture = ExtResource("6_cff6v")
+tierSixExtractTexture = ExtResource("6_ek6tx")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
+texture = ExtResource("2_cff6v")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+shape = SubResource("CircleShape2D_gvv6n")

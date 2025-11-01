@@ -1,0 +1,14 @@
+[gd_resource type="Resource" script_class="BaseMaterial" load_steps=3 format=3 uid="uid://3lvqu81gmy5k"]
+
+[ext_resource type="Script" uid="uid://lkxh633fdqwo" path="res://scripts/BaseMaterial.cs" id="1_2y5gb"]
+[ext_resource type="Texture2D" uid="uid://buqfhskejfv8c" path="res://assets/sprites/essence-special.png" id="1_b2o21"]
+
+[resource]
+script = ExtResource("1_2y5gb")
+DisplayTexture = ExtResource("1_b2o21")
+Id = "essenceSpecial"
+Name = "Special Essence"
+CurrentOwned = 0.0
+TotalFound = 0.0
+InInventory = false
+metadata/_custom_type_script = "uid://lkxh633fdqwo"

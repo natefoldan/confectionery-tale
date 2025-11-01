@@ -1,0 +1,22 @@
+[gd_scene load_steps=4 format=3 uid="uid://cdkqn5h0j7ycj"]
+
+[ext_resource type="Script" uid="uid://cso18ongv1aio" path="res://scripts/CurrencySucrose.cs" id="1_scrkc"]
+[ext_resource type="Texture2D" uid="uid://cb6m81lro4cn6" path="res://assets/sprites/currency-sucrose.png" id="2_scrkc"]
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_k2yvk"]
+radius = 38.0
+height = 94.0
+
+[node name="CurrencySucrose" type="RigidBody2D" groups=["drops"]]
+collision_layer = 32
+collision_mask = 0
+linear_damp = 10.0
+script = ExtResource("1_scrkc")
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+scale = Vector2(3, 3)
+texture = ExtResource("2_scrkc")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="."]
+position = Vector2(-1, -1)
+shape = SubResource("CapsuleShape2D_k2yvk")

@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://dhmkpvelle8c4"]
+
+[ext_resource type="Texture2D" uid="uid://b71xv6prkxxu2" path="res://assets/sprites/enemy-taffy-frame.png" id="1_dm168"]
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_tsk0n"]
+[ext_resource type="Resource" uid="uid://4vetbf4eip51" path="res://resources/material_essence_chewy.tres" id="2_a7ghj"]
+
+[resource]
+script = ExtResource("1_tsk0n")
+DisplayTexture = ExtResource("1_dm168")
+Id = "enemyTaffy"
+Name = "Taffy"
+SpawnArea = 7
+DropType = 1
+Rank = 19
+animation = "taffy"
+ItemDrops = Array[Resource]([ExtResource("2_a7ghj")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

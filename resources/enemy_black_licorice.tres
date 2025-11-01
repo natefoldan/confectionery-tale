@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://b8dw3gof7dpux"]
+
+[ext_resource type="Texture2D" uid="uid://b4mensr3674ju" path="res://assets/sprites/enemy-licorice-black-frame.png" id="1_hco2e"]
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_mb16f"]
+[ext_resource type="Resource" uid="uid://4vetbf4eip51" path="res://resources/material_essence_chewy.tres" id="2_u0cws"]
+
+[resource]
+script = ExtResource("1_mb16f")
+DisplayTexture = ExtResource("1_hco2e")
+Id = "enemyBlackLicorice"
+Name = "Black Licorice"
+SpawnArea = 4
+DropType = 1
+Rank = 13
+CollideDamage = 1
+animation = "blacklicorice"
+ItemDrops = Array[Resource]([ExtResource("2_u0cws")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

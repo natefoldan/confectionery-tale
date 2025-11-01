@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://j1rbocxshcd"]
+
+[ext_resource type="Texture2D" uid="uid://c7t0mxrmq41ds" path="res://assets/sprites/enemy-gingerbread-frame.png" id="1_kkqmf"]
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_yauwx"]
+[ext_resource type="Resource" uid="uid://e7enehh6ixix" path="res://resources/material_essence_hard.tres" id="2_4mxab"]
+
+[resource]
+script = ExtResource("1_yauwx")
+DisplayTexture = ExtResource("1_kkqmf")
+Id = "enemyGingerbread"
+Name = "Gingerbread"
+SpawnArea = 6
+DropType = 3
+Rank = 18
+animation = "gingerbread"
+ItemDrops = Array[Resource]([ExtResource("2_4mxab")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

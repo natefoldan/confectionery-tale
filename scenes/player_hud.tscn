@@ -1,0 +1,109 @@
+[gd_scene load_steps=11 format=3 uid="uid://cddnmlotbjaqs"]
+
+[ext_resource type="Texture2D" uid="uid://djmum1cxdto0b" path="res://assets/bar-orange-446x16-under.png" id="1_50hf8"]
+[ext_resource type="Texture2D" uid="uid://cswn4owq16egj" path="res://assets/bar-orange-446x16.png" id="2_mta0a"]
+[ext_resource type="Texture2D" uid="uid://dnpdjqti2kwrv" path="res://assets/panel-450x125.png" id="3_7yc75"]
+[ext_resource type="Texture2D" uid="uid://dpixxrlxj5dm8" path="res://assets/box-74x74.png" id="4_aiaqn"]
+[ext_resource type="Texture2D" uid="uid://cvfkngthgns74" path="res://assets/sprites/gun-temp.png" id="5_hpbnu"]
+[ext_resource type="Texture2D" uid="uid://c6c57qw1mhvmn" path="res://assets/bar-red-446x16-under.png" id="6_hdl38"]
+[ext_resource type="Texture2D" uid="uid://c56cerm6okv1m" path="res://assets/bar-red-446x16.png" id="7_3pvjt"]
+[ext_resource type="Texture2D" uid="uid://bs0x0dqksg5yx" path="res://assets/bar-blue-446x16.png" id="8_ke71k"]
+[ext_resource type="Texture2D" uid="uid://bkyxbhky0i65q" path="res://assets/bar-blue-1788x16-under.png" id="9_43ll4"]
+[ext_resource type="Texture2D" uid="uid://c0xh755goggkx" path="res://assets/bar-blue-1788x16.png" id="10_iakl3"]
+
+[node name="PlayerHud" type="Control"]
+layout_mode = 3
+anchors_preset = 0
+mouse_filter = 2
+
+[node name="ReloadBar" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 735.0
+offset_top = 873.0
+offset_right = 1185.0
+offset_bottom = 893.0
+value = 100.0
+texture_under = ExtResource("1_50hf8")
+texture_progress = ExtResource("2_mta0a")
+texture_progress_offset = Vector2(2, 2)
+
+[node name="GunPanel" type="TextureRect" parent="."]
+layout_mode = 0
+offset_left = 735.0
+offset_top = 896.0
+offset_right = 1185.0
+offset_bottom = 1021.0
+texture = ExtResource("3_7yc75")
+
+[node name="SlotOne" type="TextureButton" parent="GunPanel"]
+layout_mode = 0
+offset_left = 8.0
+offset_top = 43.0
+offset_right = 82.0
+offset_bottom = 117.0
+mouse_default_cursor_shape = 2
+texture_normal = ExtResource("4_aiaqn")
+
+[node name="TextureRect" type="TextureRect" parent="GunPanel/SlotOne"]
+layout_mode = 1
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -29.5
+offset_top = -18.0
+offset_right = 29.5
+offset_bottom = 18.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("5_hpbnu")
+stretch_mode = 3
+
+[node name="Label" type="Label" parent="GunPanel"]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -63.5
+offset_top = 5.0
+offset_right = 63.5
+offset_bottom = 39.0
+grow_horizontal = 2
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+theme_override_font_sizes/font_size = 24
+text = "Gun Name"
+horizontal_alignment = 1
+vertical_alignment = 2
+
+[node name="PlayerHpBar" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 735.0
+offset_top = 1024.0
+offset_right = 1185.0
+offset_bottom = 1044.0
+value = 100.0
+texture_under = ExtResource("6_hdl38")
+texture_progress = ExtResource("7_3pvjt")
+texture_progress_offset = Vector2(2, 2)
+
+[node name="PlayerShieldBar" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 735.0
+offset_top = 1024.0
+offset_right = 1185.0
+offset_bottom = 1044.0
+value = 100.0
+texture_progress = ExtResource("8_ke71k")
+texture_progress_offset = Vector2(2, 2)
+
+[node name="PlayerExpBar" type="TextureProgressBar" parent="."]
+layout_mode = 0
+offset_left = 64.0
+offset_top = 1050.0
+offset_right = 1856.0
+offset_bottom = 1070.0
+value = 100.0
+texture_under = ExtResource("9_43ll4")
+texture_progress = ExtResource("10_iakl3")
+texture_progress_offset = Vector2(2, 2)

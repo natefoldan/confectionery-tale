@@ -1,0 +1,16 @@
+[remap]
+
+importer="bitmap"
+type="BitMap"
+uid="uid://b4gsaqd88pu75"
+path="res://.godot/imported/radial-four-bmp.png-450d1b2fc537bcf87065e3b2a6b7dd4f.res"
+
+[deps]
+
+source_file="res://assets/radial-four-bmp.png"
+dest_files=["res://.godot/imported/radial-four-bmp.png-450d1b2fc537bcf87065e3b2a6b7dd4f.res"]
+
+[params]
+
+create_from=1
+threshold=0.5

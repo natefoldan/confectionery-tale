@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=3 format=3 uid="uid://dwhh45uvmv6cs"]
+
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_bqpqa"]
+[ext_resource type="Texture2D" uid="uid://do5vl1brfefks" path="res://assets/sprites/enemy-sucrose-frame.png" id="1_ix847"]
+
+[resource]
+script = ExtResource("1_bqpqa")
+DisplayTexture = ExtResource("1_ix847")
+Id = "enemyMrSucrose"
+Name = "Mr Sucrose"
+SpawnArea = 7
+DropType = 0
+Rank = 20
+CollideDamage = 0
+animation = "mrsucrose"
+ItemDrops = null
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

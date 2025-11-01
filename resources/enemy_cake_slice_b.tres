@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://bfpsmlqui1vkx"]
+
+[ext_resource type="Texture2D" uid="uid://bn5gyduyy68uj" path="res://assets/sprites/enemy-cake-slice-b-frame.png" id="1_4crh5"]
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_upjeo"]
+[ext_resource type="Resource" uid="uid://cv6ey1a4gjvjs" path="res://resources/material_essence_soft.tres" id="2_ponen"]
+
+[resource]
+script = ExtResource("1_upjeo")
+DisplayTexture = ExtResource("1_4crh5")
+Id = "enemyCakeSliceB"
+Name = "Cake Slice"
+SpawnArea = 3
+DropType = 2
+Rank = 9
+animation = "cakesliceb"
+ItemDrops = Array[Resource]([ExtResource("2_ponen")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

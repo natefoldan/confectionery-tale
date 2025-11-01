@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://gn1t7t0njde4"]
+
+[ext_resource type="Texture2D" uid="uid://xvnwll4ptmq6" path="res://assets/sprites/enemy-ice-cream-frame.png" id="1_c4tss"]
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_tj05q"]
+[ext_resource type="Resource" uid="uid://cv6ey1a4gjvjs" path="res://resources/material_essence_soft.tres" id="2_kru4v"]
+
+[resource]
+script = ExtResource("1_tj05q")
+DisplayTexture = ExtResource("1_c4tss")
+Id = "enemyIceCream"
+Name = "Ice Cream"
+SpawnArea = 3
+DropType = 2
+Rank = 10
+animation = "icecream"
+ItemDrops = Array[Resource]([ExtResource("2_kru4v")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

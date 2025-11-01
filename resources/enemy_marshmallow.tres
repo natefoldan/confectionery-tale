@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://cs18pifna03jn"]
+
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_1s6rc"]
+[ext_resource type="Texture2D" uid="uid://bg6dmruekhber" path="res://assets/sprites/enemy-marshmallow-frame.png" id="1_qux28"]
+[ext_resource type="Resource" uid="uid://cv6ey1a4gjvjs" path="res://resources/material_essence_soft.tres" id="2_3hyxk"]
+
+[resource]
+script = ExtResource("1_1s6rc")
+DisplayTexture = ExtResource("1_qux28")
+Id = "enemyMarshmallow"
+Name = "Marshmallow"
+SpawnArea = 7
+DropType = 2
+Rank = 6
+animation = "marshmallow"
+ItemDrops = Array[Resource]([ExtResource("2_3hyxk")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

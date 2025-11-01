@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://3eokb7i1f03x"]
+
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_4pb5r"]
+[ext_resource type="Texture2D" uid="uid://cp0c82hilx04" path="res://assets/sprites/enemy-candy-cane-frame.png" id="1_7jnel"]
+[ext_resource type="Resource" uid="uid://e7enehh6ixix" path="res://resources/material_essence_hard.tres" id="2_i87j2"]
+
+[resource]
+script = ExtResource("1_4pb5r")
+DisplayTexture = ExtResource("1_7jnel")
+Id = "enemyCandyCane"
+Name = "Candy Cane"
+SpawnArea = 6
+DropType = 3
+Rank = 17
+animation = "candycane"
+ItemDrops = Array[Resource]([ExtResource("2_i87j2")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

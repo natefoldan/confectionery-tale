@@ -1,0 +1,143 @@
+[gd_scene load_steps=17 format=3 uid="uid://bqsjmybkkvub8"]
+
+[ext_resource type="Script" uid="uid://bp7pqs7hbjrda" path="res://scripts/EnemySpawner.cs" id="1_devoi"]
+[ext_resource type="Texture2D" uid="uid://darxfpe0hpdta" path="res://assets/portal-blue.png" id="2_xl0gr"]
+[ext_resource type="Texture2D" uid="uid://d4hmts8epxy2x" path="res://assets/portal-blue-bg.png" id="3_31irv"]
+[ext_resource type="Texture2D" uid="uid://cndaxa6doge06" path="res://assets/portal-shadow.png" id="3_ih16b"]
+[ext_resource type="Texture2D" uid="uid://by6k230g2ekgr" path="res://assets/portal-red.png" id="3_txvhj"]
+[ext_resource type="Texture2D" uid="uid://notc4af70c5l" path="res://assets/portal-purple.png" id="4_c01tg"]
+[ext_resource type="Texture2D" uid="uid://c3ctm257heo1e" path="res://assets/portal-red-bg.png" id="5_sukom"]
+[ext_resource type="Texture2D" uid="uid://bp3qh524rcy0g" path="res://assets/cleanse-radius.png" id="6_sukom"]
+[ext_resource type="Texture2D" uid="uid://cm82u85wrynbj" path="res://assets/portal-purple-bg.png" id="7_md2sj"]
+[ext_resource type="Texture2D" uid="uid://8if28juenk23" path="res://assets/btn-red-120x50.png" id="8_e1hw7"]
+[ext_resource type="Texture2D" uid="uid://o20lp62kgrh1" path="res://assets/cleanse-radius-under.png" id="8_tovkt"]
+
+[sub_resource type="Animation" id="Animation_pfcs8"]
+length = 0.001
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 0,
+"values": [0.0]
+}
+
+[sub_resource type="Animation" id="Animation_kqx4a"]
+resource_name = "swirl"
+length = 4.0
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:rotation")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 4),
+"transitions": PackedFloat32Array(1, 1),
+"update": 0,
+"values": [0.0, 6.28319]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_50d7c"]
+_data = {
+&"RESET": SubResource("Animation_pfcs8"),
+&"swirl": SubResource("Animation_kqx4a")
+}
+
+[sub_resource type="Gradient" id="Gradient_22nel"]
+offsets = PackedFloat32Array(0, 0.0762943, 0.52861, 0.79564, 1)
+colors = PackedColorArray(0, 0, 0, 1, 0.729412, 0.0745098, 0.0745098, 1, 0.851835, 0.465169, 0.818331, 1, 0.93491, 0.765045, 0.920192, 1, 1, 1, 1, 1)
+
+[sub_resource type="CircleShape2D" id="CircleShape2D_tovkt"]
+radius = 1149.0
+
+[node name="EnemySpawner" type="StaticBody2D" groups=["spawners"]]
+z_index = 2
+script = ExtResource("1_devoi")
+id = "portalPlainsOne"
+spawnRate = 0.5
+blueTexture = ExtResource("2_xl0gr")
+redTexture = ExtResource("3_txvhj")
+purpleTexture = ExtResource("4_c01tg")
+blueSwirlTexture = ExtResource("3_31irv")
+redSwirlTexture = ExtResource("5_sukom")
+purpleSwirlTexture = ExtResource("7_md2sj")
+metadata/_edit_group_ = true
+
+[node name="CleanseBar" type="TextureProgressBar" parent="."]
+visible = false
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -1142.0
+offset_top = -1142.0
+offset_right = 1142.0
+offset_bottom = 1142.0
+grow_horizontal = 2
+grow_vertical = 2
+fill_mode = 4
+texture_under = ExtResource("8_tovkt")
+texture_progress = ExtResource("6_sukom")
+
+[node name="Swirl" type="Sprite2D" parent="."]
+texture = ExtResource("3_31irv")
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Swirl"]
+libraries = {
+&"": SubResource("AnimationLibrary_50d7c")
+}
+autoplay = "swirl"
+
+[node name="Sprite2D" type="Sprite2D" parent="."]
+texture = ExtResource("2_xl0gr")
+
+[node name="CPUParticles2D" type="CPUParticles2D" parent="Sprite2D"]
+visible = false
+emitting = false
+amount = 30
+texture = ExtResource("8_e1hw7")
+lifetime = 2.0
+emission_shape = 1
+emission_sphere_radius = 76.11
+direction = Vector2(0, -1)
+orbit_velocity_min = 1.0
+orbit_velocity_max = 1.0
+color_ramp = SubResource("Gradient_22nel")
+
+[node name="Shadow" type="TextureRect" parent="."]
+z_index = -2
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -557.0
+offset_top = 800.0
+offset_right = 557.0
+offset_bottom = 897.0
+grow_horizontal = 2
+grow_vertical = 2
+texture = ExtResource("3_ih16b")
+
+[node name="DetectionArea" type="Area2D" parent="."]
+collision_layer = 0
+
+[node name="CleanseArea" type="Area2D" parent="."]
+visible = false
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="CleanseArea"]
+shape = SubResource("CircleShape2D_tovkt")
+
+[connection signal="area_entered" from="DetectionArea" to="." method="PlayerInRange"]
+[connection signal="area_exited" from="DetectionArea" to="." method="PlayerNotInRange"]
+[connection signal="area_entered" from="CleanseArea" to="." method="PlayerInCleanseRange"]
+[connection signal="area_exited" from="CleanseArea" to="." method="PlayerNotInCleanseRange"]

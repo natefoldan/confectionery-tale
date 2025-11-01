@@ -1,0 +1,17 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://dtd1khpjx8aoe"]
+
+[ext_resource type="Texture2D" uid="uid://q2jvl2df8ntw" path="res://assets/sprites/enemy-peanut-butter-cup-frame.png" id="1_a3sg7"]
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_ydnf3"]
+[ext_resource type="Resource" uid="uid://cv6ey1a4gjvjs" path="res://resources/material_essence_soft.tres" id="2_pk2fu"]
+
+[resource]
+script = ExtResource("1_ydnf3")
+DisplayTexture = ExtResource("1_a3sg7")
+Id = "enemyPeanutButterCup"
+Name = "Peanut Butter Cup"
+SpawnArea = 3
+DropType = 2
+Rank = 8
+animation = "peanutbuttercup"
+ItemDrops = Array[Resource]([ExtResource("2_pk2fu")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

@@ -1,0 +1,26 @@
+[gd_scene load_steps=2 format=3 uid="uid://lbjmeifgn0bm"]
+
+[ext_resource type="Script" uid="uid://c2si3wejixn2j" path="res://scripts/PopupText.cs" id="1_4m4vl"]
+
+[node name="Label" type="Label"]
+z_index = 10
+custom_minimum_size = Vector2(100, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -50.0
+offset_top = -11.5
+offset_right = 50.0
+offset_bottom = 11.5
+grow_horizontal = 2
+grow_vertical = 2
+size_flags_horizontal = 4
+theme_override_colors/font_color = Color(0.952941, 0.941176, 0.0313726, 1)
+theme_override_constants/outline_size = 24
+theme_override_font_sizes/font_size = 128
+text = "9999.9k"
+horizontal_alignment = 1
+vertical_alignment = 1
+script = ExtResource("1_4m4vl")

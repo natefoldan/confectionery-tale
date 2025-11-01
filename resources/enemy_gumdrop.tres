@@ -1,0 +1,18 @@
+[gd_resource type="Resource" script_class="BaseEnemy" load_steps=4 format=3 uid="uid://j8corlyrbxt"]
+
+[ext_resource type="Script" uid="uid://7x1hvvmr863i" path="res://scripts/BaseEnemy.cs" id="1_2h0bv"]
+[ext_resource type="Texture2D" uid="uid://ceeb7cylr7o3n" path="res://assets/sprites/enemy-gumdrop-frame.png" id="1_b38u3"]
+[ext_resource type="Resource" uid="uid://4vetbf4eip51" path="res://resources/material_essence_chewy.tres" id="2_0molt"]
+
+[resource]
+script = ExtResource("1_2h0bv")
+DisplayTexture = ExtResource("1_b38u3")
+Id = "gumdrop"
+Name = "Gumdrop"
+SpawnArea = 1
+DropType = 1
+Rank = 3
+CollideDamage = 1
+animation = "gumdrop"
+ItemDrops = Array[Resource]([ExtResource("2_0molt")])
+metadata/_custom_type_script = "uid://7x1hvvmr863i"

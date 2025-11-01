@@ -1,0 +1,16 @@
+[remap]
+
+importer="bitmap"
+type="BitMap"
+uid="uid://dluts5dc3bv57"
+path="res://.godot/imported/radial-five-bmp.png-82849e05523c58031b8bdaf74966c626.res"
+
+[deps]
+
+source_file="res://assets/radial-five-bmp.png"
+dest_files=["res://.godot/imported/radial-five-bmp.png-82849e05523c58031b8bdaf74966c626.res"]
+
+[params]
+
+create_from=1
+threshold=0.5

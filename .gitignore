@@ -1,0 +1,26 @@
+﻿# Default ignored files
+/shelf/
+/workspace.xml
+# Rider ignored files
+/contentModel.xml
+/.idea.Shelter.iml
+/projectSettingsUpdater.xml
+/modules.xml
+# Editor-based HTTP Client requests
+/httpRequests/
+# Datasource local storage ignored files
+/dataSources/
+/dataSources.local.xml
+/.idea/
+
+# Design/Asset ignored files
+*.psd
+
+# Godot 4+ specific ignores
+.godot/
+/android/
+
+# My custom file types
+*.psd
+*.mp3
+*.ogg

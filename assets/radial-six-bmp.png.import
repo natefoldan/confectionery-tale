@@ -1,0 +1,16 @@
+[remap]
+
+importer="bitmap"
+type="BitMap"
+uid="uid://dkydu2o4frohb"
+path="res://.godot/imported/radial-six-bmp.png-8e40ea37740cbbd35ddcad404941dfd8.res"
+
+[deps]
+
+source_file="res://assets/radial-six-bmp.png"
+dest_files=["res://.godot/imported/radial-six-bmp.png-8e40ea37740cbbd35ddcad404941dfd8.res"]
+
+[params]
+
+create_from=1
+threshold=0.5
