@@ -8,99 +8,99 @@ public partial class BaseExtract : Resource {
     [Export] public string Id { get; set; }
     [Export] public string Name { get; set; }
     
-    public enum Type { Mod, Resource };
-    [Export] public Type DropType { get; set; } //must be used to export enum
+    // public enum Type { Extract, Resource };
+    // [Export] public Type DropType { get; set; } //must be used to export enum
     
     [Export] public int CurrentOwned { get; set; }
     [Export] public bool OtherDrop { get; set; }
     [Export] public bool InInventory { get; set; }
     [Export] public bool Equipped { get; set; }
     
-    [Export] public string ModName { get; set; }
-    [Export] public int ModTier { get; set; }
-    [Export] public float ModQuality { get; set; }
-    [Export] public int ModDropChance { get; set; }
+    [Export] public string ExtractName { get; set; }
+    [Export] public int ExtractTier { get; set; }
+    [Export] public float ExtractQuality { get; set; }
+    [Export] public int ExtractDropChance { get; set; }
     
-    [Export] public int ModBaseDamage { get; set; }
-    [Export] public int ModBasePierce { get; set; }
-    [Export] public int ModBaseCritChance { get; set; }
-    [Export] public int ModBaseCritDamage { get; set; }
-    [Export] public int ModBaseShield { get; set; }
-    [Export] public int ModBaseShieldRegen { get; set; }
-    [Export] public int ModBaseHealth { get; set; }
-    [Export] public int ModBasePickupRange { get; set; }
-    [Export] public int ModBaseSpeed { get; set; }
-    [Export] public int ModBaseExtractDrop { get; set; }
-    [Export] public int ModBaseSucroseDrop { get; set; }
-    [Export] public int ModBaseExpGain { get; set; }
+    [Export] public int ExtractBaseDamage { get; set; }
+    [Export] public int ExtractBasePierce { get; set; }
+    [Export] public int ExtractBaseCritChance { get; set; }
+    [Export] public int ExtractBaseCritDamage { get; set; }
+    [Export] public int ExtractBaseShield { get; set; }
+    [Export] public int ExtractBaseShieldRegen { get; set; }
+    [Export] public int ExtractBaseHealth { get; set; }
+    [Export] public int ExtractBasePickupRange { get; set; }
+    [Export] public int ExtractBaseSpeed { get; set; }
+    [Export] public int ExtractBaseExtractDrop { get; set; }
+    [Export] public int ExtractBaseSucroseDrop { get; set; }
+    [Export] public int ExtractBaseExpGain { get; set; }
 
     //quality values (calculated percentages)
-    [Export] public float ModBaseDamageQuality { get; set; }
-    [Export] public float ModBasePierceQuality { get; set; }
-    [Export] public float ModBaseCritChanceQuality { get; set; }
-    [Export] public float ModBaseCritDamageQuality { get; set; }
-    [Export] public float ModBaseShieldQuality { get; set; }
-    [Export] public float ModBaseShieldRegenQuality { get; set; }
-    [Export] public float ModBaseHealthQuality { get; set; }
-    [Export] public float ModBasePickupRangeQuality { get; set; }
-    [Export] public float ModBaseSpeedQuality { get; set; }
-    [Export] public float ModBaseExtractDropQuality { get; set; }
-    [Export] public float ModBaseSucroseDropQuality { get; set; }
-    [Export] public float ModBaseExpGainQuality { get; set; }
+    [Export] public float ExtractBaseDamageQuality { get; set; }
+    [Export] public float ExtractBasePierceQuality { get; set; }
+    [Export] public float ExtractBaseCritChanceQuality { get; set; }
+    [Export] public float ExtractBaseCritDamageQuality { get; set; }
+    [Export] public float ExtractBaseShieldQuality { get; set; }
+    [Export] public float ExtractBaseShieldRegenQuality { get; set; }
+    [Export] public float ExtractBaseHealthQuality { get; set; }
+    [Export] public float ExtractBasePickupRangeQuality { get; set; }
+    [Export] public float ExtractBaseSpeedQuality { get; set; }
+    [Export] public float ExtractBaseExtractDropQuality { get; set; }
+    [Export] public float ExtractBaseSucroseDropQuality { get; set; }
+    [Export] public float ExtractBaseExpGainQuality { get; set; }
     
-    public void SetModStatAndValue(string statName, int value, float qualityPercentage) {
+    public void SetExtractStatAndValue(string statName, int value, float qualityPercentage) {
         switch (statName) {
-            case "tier": ModTier = value; break;
+            case "tier": ExtractTier = value; break;
             case "Damage":
-                ModBaseDamage = value;
-                ModBaseDamageQuality = qualityPercentage;
+                ExtractBaseDamage = value;
+                ExtractBaseDamageQuality = qualityPercentage;
                 break;
             case "Pierce":
-                ModBasePierce = value;
-                ModBasePierceQuality = qualityPercentage;
+                ExtractBasePierce = value;
+                ExtractBasePierceQuality = qualityPercentage;
                 break;
             case "Crit Chance":
-                ModBaseCritChance = value;
-                ModBaseCritChanceQuality = qualityPercentage;
+                ExtractBaseCritChance = value;
+                ExtractBaseCritChanceQuality = qualityPercentage;
                 break;
             case "Crit Damage":
-                ModBaseCritDamage = value;
-                ModBaseCritDamageQuality = qualityPercentage;
+                ExtractBaseCritDamage = value;
+                ExtractBaseCritDamageQuality = qualityPercentage;
                 break;
             case "Shield":
-                ModBaseShield = value;
-                ModBaseShieldQuality = qualityPercentage;
+                ExtractBaseShield = value;
+                ExtractBaseShieldQuality = qualityPercentage;
                 break;
             case "Shield Regen":
-                ModBaseShieldRegen = value;
-                ModBaseShieldRegenQuality = qualityPercentage;
+                ExtractBaseShieldRegen = value;
+                ExtractBaseShieldRegenQuality = qualityPercentage;
                 break;
             case "Health":
-                ModBaseHealth = value;
-                ModBaseHealthQuality = qualityPercentage;
+                ExtractBaseHealth = value;
+                ExtractBaseHealthQuality = qualityPercentage;
                 break;
             case "Pickup Range":
-                ModBasePickupRange = value;
-                ModBasePickupRangeQuality = qualityPercentage;
+                ExtractBasePickupRange = value;
+                ExtractBasePickupRangeQuality = qualityPercentage;
                 break;
             case "Speed":
-                ModBaseSpeed = value;
-                ModBaseSpeedQuality = qualityPercentage;
+                ExtractBaseSpeed = value;
+                ExtractBaseSpeedQuality = qualityPercentage;
                 break;
             case "Extract Drop":
-                ModBaseExtractDrop = value;
-                ModBaseExtractDropQuality = qualityPercentage;
+                ExtractBaseExtractDrop = value;
+                ExtractBaseExtractDropQuality = qualityPercentage;
                 break;
             case "Sucrose Drop":
-                ModBaseSucroseDrop = value;
-                ModBaseSucroseDropQuality = qualityPercentage;
+                ExtractBaseSucroseDrop = value;
+                ExtractBaseSucroseDropQuality = qualityPercentage;
                 break;
             case "Exp Gain":
-                ModBaseExpGain = value;
-                ModBaseExpGainQuality = qualityPercentage;
+                ExtractBaseExpGain = value;
+                ExtractBaseExpGainQuality = qualityPercentage;
                 break;
             default:
-                GD.PushWarning($"BaseExtract: Attempted to set unknown mod stat '{statName}' with value {value}.");
+                GD.PushWarning($"BaseExtract: Attempted to set unknown extract stat '{statName}' with value {value}.");
                 break;
         }
     }

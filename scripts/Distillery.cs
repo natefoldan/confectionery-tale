@@ -7,6 +7,7 @@ public partial class Distillery : Control {
 	private UI ui;
 	private Main main;
 	private Variables vars;
+	private ExtractManager extractManager;
 	private TooltipHandler tooltips;
 	private Label currentSucroseLabel;
 	private Node2D inventoryContainer;
@@ -62,6 +63,7 @@ public partial class Distillery : Control {
 		tooltips = GetNode<TooltipHandler>("/root/TooltipHandler");
 		ui = GetNode<UI>("/root/Main/UI");
 		main = GetNode<Main>("/root/Main");
+		extractManager = GetNode<ExtractManager>("/root/ExtractManager");
 		main.SucroseChanged += HandleSucroseChanged;
 		SetupRightPanel();
 		SetupRefiner();
@@ -200,9 +202,9 @@ public partial class Distillery : Control {
 		if (!refinerPanel.Visible) { return false; }
 		foreach (var slot in allRefinerSlots) {
 			if (slot.outputSlot) { continue; } //make sure its an input slot
-			if (!slot.slotTier.Equals(item.ModTier)) { continue; } //match the mod tier to the item tier
+			if (!slot.slotTier.Equals(item.ExtractTier)) { continue; } //match the extract tier to the item tier
 			if (slot.GetFull()) { continue; }
-			slot.AddModToSlot(item);
+			slot.AddExtractToSlot(item);
 			CheckRefinerButtons();
 			return true;
 		}
@@ -212,7 +214,7 @@ public partial class Distillery : Control {
 	private void RemoveExtractFromDistillery(BaseExtract item, DistillerySlot slot) {
 		// GD.Print("removing " + item.Name);
 		if (ui.GetExtractsInventoryFull()) { return; } //add notification about inventory full        
-		// if (_equippedModsData.Remove(item)) { item.Equipped = false; } //items not saved in refiner
+		// if (_equippedExtractsData.Remove(item)) { item.Equipped = false; } //items not saved in refiner
 		ui.AddExtractToInventory(item);
 		slot.Reset();
 		CheckRefinerButtons();
@@ -233,11 +235,11 @@ public partial class Distillery : Control {
 		return 0;
 	}
 	
-	private void CombineMods(int tier) {
+	private void CombineExtracts(int tier) {
 		if (tier < 1) { return; }
 		if (!CheckReadyForCombine(tier)) { return; }
 		main.ChangeSucrose(-GetRefineCost(tier));
-		GetNewModOutput(tier + 1);
+		GetNewExtractOutput(tier + 1);
 		ResetRefinerInputSlots(tier);
 		CheckRefinerButtons();
 	}
@@ -283,14 +285,14 @@ public partial class Distillery : Control {
 		return false;
 	}
 	
-	private void GetNewModOutput(int tier) {
-		if (tier > 5) { tier = 5; } //not done, this will upgrade a t5 mod
-		BaseExtract newMod = main.GenerateNewDistilleryExtract(tier);
+	private void GetNewExtractOutput(int tier) {
+		if (tier > 5) { tier = 5; } //not done, this will upgrade a t5 extract
+		BaseExtract newExtract = extractManager.GenerateNewDistilleryExtract(tier);
 		foreach (var slot in allRefinerSlots) {
 			if (!slot.outputSlot) { continue; }
 			if (!slot.slotTier.Equals(tier - 1)) { continue; }
 			if (slot.GetFull()) { continue; }
-			slot.AddModToSlot(newMod);
+			slot.AddExtractToSlot(newExtract);
 			return;
 		}
 	}
@@ -376,8 +378,8 @@ public partial class Distillery : Control {
 		}
 		chancePanelContainer.Visible = false;
 		condenserOutputLabel.Text = $"Created Tier {finalTier} Extract";
-		BaseExtract newMod = main.GenerateNewDistilleryExtract(finalTier);
-		condenserOutputSlot.AddModToSlot(newMod);
+		BaseExtract newExtract = extractManager.GenerateNewDistilleryExtract(finalTier);
+		condenserOutputSlot.AddExtractToSlot(newExtract);
 		collectCondenseExtractLabel.Visible = true;
 		CheckCondenseButton();
 	}

@@ -7,6 +7,7 @@ public partial class Enemy : CharacterBody2D {
     [Signal] public delegate void EnemyCollidedEventHandler(Area2D body, Vector2 pos);
     private Variables vars;
     private Main main;
+    private ExtractManager extractManager;
     private BaseEnemy thisEnemy;
     private PackedScene popupTextScene;
     private AnimationPlayer animationPlayer;
@@ -51,6 +52,7 @@ public partial class Enemy : CharacterBody2D {
     public override void _Ready() {
         vars = GetNode<Variables>("/root/Variables");
         main = GetNode<Main>("/root/Main");
+        extractManager = GetNode<ExtractManager>("/root/ExtractManager");
         SetupEnemy();
     }
     
@@ -270,8 +272,8 @@ public partial class Enemy : CharacterBody2D {
         main.GainPlayerExp(GetExpDrop());
         main.SpawnCurrencySucrose(GlobalPosition, GetSucroseDrop());
         if (!corrupted) {
-            main.SpawnExtractDrop(GlobalPosition, GetEnemyRank());
-            main.SpawnMaterialDrop(GlobalPosition, GetItemDrop());
+            extractManager.SpawnExtractDrop(GlobalPosition, GetEnemyRank());
+            extractManager.SpawnMaterialDrop(GlobalPosition, GetItemDrop());
         }
         QueueFree();
     }

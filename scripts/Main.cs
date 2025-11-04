@@ -17,31 +17,14 @@ public partial class Main : Node2D {
 	private Skills skills;
 	private Assignments assignments;
 	private Player player;
-	private Node2D world;
 	private Camera2D playerCamera;
 	private PackedScene playerScene;
 	private PackedScene cutsceneManagerScene;
 	private PackedScene currencySucroseScene;
-	private PackedScene itemDropScene;
 	private PackedScene popupTextScene;
 	private WeaponData weaponData;
 	private WeaponData currentWeaponData;
-	private Texture2D tierOneExtractTexture;
-	private Texture2D tierTwoExtractTexture;
-	private Texture2D tierThreeExtractTexture;
-	private Texture2D tierFourExtractTexture;
-	private Texture2D tierFiveExtractTexture;
 	private List<WeaponData> weaponDataList;
-	private List<ExtractData> extractDataList;
-	private List<ItemDrop> allCurrentDroppedItems = new List<ItemDrop>();
-	private List<(int tier, int weight)> dropWeights;
-	private List<(int tier, int chance)> extractDropChances;
-	private List<(string stat, int min, int max)> tierOneExtractStats;
-	private List<(string stat, int min, int max)> tierTwoExtractStats;
-	private List<(string stat, int min, int max)> tierThreeExtractStats;
-	private List<(string stat, int min, int max)> tierFourExtractStats;
-	private List<(string stat, int min, int max)> tierFiveExtractStats;
-	private List<(string statName, int value)> tempItemStatsList;
 	
 	private Sprite2D playerSpawnPortal;
 	private StaticBody2D shelterPlain;
@@ -83,27 +66,17 @@ public partial class Main : Node2D {
 
         tooltips = GetNode<TooltipHandler>("/root/TooltipHandler");
         
-        world = GetNode<Node2D>("World");
         tileMapWorld = GetNode<TileMapLayer>("World/TileMapWorld");
         playerScene = GD.Load<PackedScene>("res://scenes/player.tscn");
         cutsceneManagerScene = GD.Load<PackedScene>("res://scenes/cutscene_manager.tscn");
         currencySucroseScene = GD.Load<PackedScene>("res://scenes/currency_sucrose.tscn");
-        itemDropScene = GD.Load<PackedScene>("res://scenes/item_drop.tscn");
         popupTextScene = GD.Load<PackedScene>("res://scenes/popup_text.tscn");
         
         playerSpawnPortal = GetNode<Sprite2D>("World/PlayerSpawnPointOne/PlayerSpawnPortal");
         playerSpawnPortal.Visible = false;
         
-	    tierOneExtractTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/extract-yellow.png");
-	    tierTwoExtractTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/extract-green.png");
-	    tierThreeExtractTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/extract-blue.png");
-	    tierFourExtractTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/extract-purple.png");
-	    tierFiveExtractTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/extract-orange.png");
-	    // tierSixExtractTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/extract-pink.png");
         weaponData = GetNode<WeaponData>("/root/WeaponData");
         BuildWeaponData();
-        BuildExtractData();
-        SetExtractDropWeights();
         ui.InitializeUIComponents(this); //pass 'this' (the Main instance) to UI for its data
         
         InstantiatePlayer();
@@ -114,7 +87,6 @@ public partial class Main : Node2D {
 		RemoveOwnedWorldObjects();
 		SetupSpawners();
 		assignments.SetupAssignments(); //must run after getting world objects
-		
 		//camping
 		tentScene = GD.Load<PackedScene>("res://scenes/tent.tscn");
 		tentPlacementPreview = GetNode<Area2D>("World/Tent");
@@ -256,133 +228,10 @@ public partial class Main : Node2D {
 		CallDeferred("add_child", currencySucrose);
 	}
 	
-	public void SpawnExtractDrop(Vector2 pos, int enemyRank) {
-		var dropTier = GetModDropType(enemyRank);
-		if (dropTier == 0) { return; }
-		
-		BaseExtract newExtract = GenerateNewExtract(dropTier);
-		var itemDropNode = itemDropScene.Instantiate<ItemDrop>();
-		itemDropNode.SetPos(pos);
-		itemDropNode.SetThisExtract(newExtract); //ItemDrop node holds this BaseExtract data
-		allCurrentDroppedItems.Add(itemDropNode); //track the visual node (not directly saved by this call)
-		world.CallDeferred("add_child", itemDropNode);
-		
-		itemDropNode.CallDeferred("SetExtractTexture");
-	}
-
-	public void SpawnMaterialDrop(Vector2 pos, BaseMaterial materialDrop) {
-		if (materialDrop == null) { return; }
-		// GD.Print(materialDrop.Id);
-		// BaseResource newResource = GenerateNewExtract(dropTier);
-		var itemDropNode = itemDropScene.Instantiate<ItemDrop>();
-		itemDropNode.SetPos(pos);
-		// itemDropNode.SetThisItemResource(newExtract); //ItemDrop node holds this BaseExtract data
-		
-		allCurrentDroppedItems.Add(itemDropNode); //track the visual node (not directly saved by this call)
-		world.CallDeferred("add_child", itemDropNode);
-		
-		itemDropNode.CallDeferred("SetMaterialTexture", materialDrop.DisplayTexture);
-		
-		itemDropNode.SetThisMaterial(materialDrop);
-	}
-
-	public BaseExtract GenerateNewDistilleryExtract(int tier) {
-		if (tier == 0) { return null; }
-		BaseExtract newExtract = GenerateNewExtract(tier);
-		return newExtract;
-	}
-	
-	private BaseExtract GenerateNewExtract(int tier) {
-		BaseExtract droppedItemData = new BaseExtract();
-		
-		droppedItemData.Id = Guid.NewGuid().ToString();
-		// GD.Print($"Assigned Item ID: {droppedItemData.Id}");
-		droppedItemData.ModTier = tier;
-		
-		Texture2D itemDisplayTexture = GetTextureForTier(tier);
-		droppedItemData.DisplayTexture = itemDisplayTexture;
-		
-		RollModValues(droppedItemData);
-		GenerateTempStatsList(droppedItemData);
-		GenerateItemName(droppedItemData);
-		SetItemQuality(droppedItemData);
-		return droppedItemData;
-	}
-	
-	//this generates extract that is manually set in the world
-	public BaseExtract GenerateFixedExtract(int tier, Godot.Collections.Dictionary<string, int> fixedStats)
-	{
-		GD.Print("generate");
-		BaseExtract itemData = new BaseExtract();
-
-		itemData.Id = Guid.NewGuid().ToString();
-		itemData.ModTier = tier;
-		itemData.DisplayTexture = GetTextureForTier(tier); // Your existing function
-
-		// --- This block replaces your random RollModValues() ---
-		var allModDefinitions = GetExtractDataList(); // Your existing function
-
-		foreach (var stat in fixedStats)
-		{
-			string statName = stat.Key;
-			int statValue = stat.Value;
-
-			// We must find the MaxRoll for this stat to calculate its quality
-			var modDef = allModDefinitions.FirstOrDefault(d => d.Tier == tier && d.Stat == statName);
-
-			float calculatedQualityPercentage = 0f;
-			if (modDef != null && modDef.MaxRoll > 0)
-			{
-				// Calculate quality just like in RollModValues
-				calculatedQualityPercentage = ((float)statValue / modDef.MaxRoll) * 100f;
-				calculatedQualityPercentage = (int)Math.Ceiling(calculatedQualityPercentage);
-			}
-
-			// Set the fixed stat and its calculated quality
-			itemData.SetModStatAndValue(statName, statValue, calculatedQualityPercentage);
-		}
-		// --- End of new block ---
-
-		GenerateTempStatsList(itemData); // Your existing function
-		GenerateItemName(itemData);      // Your existing function
-		SetItemQuality(itemData);        // Your existing function
-
-		return itemData;
-	}
-	
-	private Texture2D GetTextureForTier(int tier) {
-		switch (tier) {
-			case 1: return tierOneExtractTexture;
-			case 2: return tierTwoExtractTexture;
-			case 3: return tierThreeExtractTexture;
-			case 4: return tierFourExtractTexture;
-			case 5: return tierFiveExtractTexture;
-			default: return null; //default/placeholder texture
-		}
-	}
-
 	public void GainAssignment(string assignment) {
 		assignments.GainAssignment(assignment);
 	}
 	
-	public void GainExtract(BaseExtract extractToGain) {
-		// GD.Print($"Item gained: {extractToGain.Name ?? "Unnamed Item"}");
-   
-		//this calls AddItemToInventory with the BaseExtract DATA. AddItemToInventory then adds it to vars.savedResources.playerInventoryItems
-		bool addedToInventory = ui.AddExtractToInventory(extractToGain); 
-   
-		if (addedToInventory) {
-			ShowPopupInfo(PopupEventType.ExtractGained, amount: 1, specificItemName: extractToGain.Name);
-			//if successfully added to inventory, remove its visual node and data from world drops.
-			RemoveItemDropNodeAndData(extractToGain.Id); // Pass the ID of the BaseExtract
-			vars.savedResources.inventoryExtracts.Add(extractToGain);
-			vars.SaveGameData();
-		} else {
-			//will rarely be hit now because Player.CollectItem handles full inventory before calling GainItem
-			GD.Print($"Inventory full for item {extractToGain.Name}.");
-		}
-	}
-
 	public void GainMaterial(BaseMaterial material, int amount) {
 		material.CurrentOwned += amount;
 		material.TotalFound += amount;
@@ -401,40 +250,6 @@ public partial class Main : Node2D {
 		EmitSignal(SignalName.MaterialsChanged);
 	}
 	
-	private void RemoveItemDropNodeAndData(string itemId) {
-		//remove the visual ItemDrop node from the scene
-		ItemDrop nodeToRemove = null;
-		foreach (var dropNode in allCurrentDroppedItems) {
-			if (IsInstanceValid(dropNode) && dropNode.GetExtractData() != null && dropNode.GetExtractData().Id == itemId) {
-				nodeToRemove = dropNode;
-				break;
-			}
-		}
-
-		if (nodeToRemove != null) {
-			allCurrentDroppedItems.Remove(nodeToRemove); // Remove visual node from Main's tracking
-			nodeToRemove.QueueFree(); // Free the visual node from the scene tree
-		}
-
-		// --- Remove the BaseExtract DATA from the saved world drops list ---
-		// This is crucial to prevent picked-up items from reappearing as world drops on next load.
-		// This part is for items that were *dropped in the world* and are now being picked up.
-		BaseExtract dataToRemove = null;
-		// Iterate through the saved list itself (vars.savedResources.droppedItems)
-		foreach (var savedWorldDropData in vars.savedResources.inventoryExtracts) {
-			if (savedWorldDropData.Id == itemId) { // Compare using the unique ID
-				// GD.Print("comparing ids: " + savedWorldDropData.Id + " | " + itemId);
-				dataToRemove = savedWorldDropData;
-				break;
-			}
-		}
-
-		if (dataToRemove != null) {
-			vars.savedResources.inventoryExtracts.Remove(dataToRemove); //remove the data from the saved Array
-			vars.SaveGameData();
-		}
-	}
-	
 	public void EquipWeapon(int what) {
 		if (what.Equals(vars.CurrentFireMode)) { return; }
 		//foreach (var b in GetTree().GetNodesInGroup("bullets")) { b.QueueFree(); } //clear current bullets when swapping
@@ -445,267 +260,6 @@ public partial class Main : Node2D {
 		// ui.UpdateGameHud(); //if using selectable slots at bottom of hud
 		SetWeaponDataOnPlayer(); //needs to bet set before setting crosshairs -not ideal
 		SetWeaponCrosshairs();
-	}
-	
-	//mods
-	private void SetExtractDropWeights() {
-		extractDropChances = new List<(int, int)>() {
-			(5, 5), //t5 .0001% 1/1000000 -too high, should be influenced by other stuff (enemy level, player stats)
-			(4, 4), //t4 .001% 1/100000
-			(3, 3), //t3 .01% 1/10000
-			(2, 2), //t2 .1% 1/1000
-			(1, 1), //t1 1% 1/100
-		};
-		
-		// for (int i = 0; i < 50; i++) { GetModDropType(); } //simulate mod drop
-	}
-
-	private int GetModDropType(int enemyRank) {
-        float finalModDropChance = GetPlayerFinalExtractDropChance(enemyRank); // e.g., 0.1f, 0.2f, 1.5f
-
-        // finalModDropChance = 100; //for testing -delete
-        
-		//generate a random float between 0.0f (inclusive) and 1.0f (exclusive)
-        float randomNormalizedFloat = GD.Randf();
-
-		//scale it to your desired range (0.0f to 100.0f)
-        float randomFloat100 = randomNormalizedFloat * 100.0f; //this generates a random float between 0.0 and 100.0
-
-		//compare the random float (0-100) to finalModDropChance (which is also 0-100)
-        if (randomFloat100 <= finalModDropChance) {
-	        // GD.Print($"MOD DROP SUCCESS! Rolled {randomFloat100:0.00}% <= {finalModDropChance:0.00}%");
-        } else { //mod does not drop
-	        // GD.Print($"MOD DROP FAILED! Rolled {randomFloat100:0.00}% > {finalModDropChance:0.00}%");
-	        return 0;
-        }
-
-        // GD.Print("a mod might drop...");
-
-        //determine which rarity drops. iterate from highest rarity (smallest chance number) to lowest
-        //this ensures a rare drop takes precedence over a common one if conditions met
-        int droppedTier = 0; //default to no drop if no condition met
-
-        // Sort by tier descending, or iterate in a fixed order (e.g., highest tier first)
-        // Ensure your list is ordered from highest tier to lowest, or sort it.
-        // For example, if modDropChances is always ordered from lowest tier to highest (as you defined it),
-        // you might need to iterate in reverse or sort first.
-        // Let's assume you want to check higher rarities first, if multiple conditions are met.
-        // So, iterate modDropChances in reverse or define it from highest to lowest tier.
-        var sortedChances = extractDropChances.OrderByDescending(d => d.tier);
-
-        foreach (var dropInfo in sortedChances) { //iterate from highest tier to lowest
-            int randomNumber = GD.RandRange(1, dropInfo.chance); //roll a number between 1 and the chance value
-            if (randomNumber == 1) { //if the random number is exactly 1, the condition is met
-                droppedTier = dropInfo.tier;
-                break; //found the rarity, stop checking
-            }
-        }
-
-        // if (droppedTier > 0) {
-        //     GD.Print($"Dropped item of Tier: {droppedTier}");
-        // } else {
-        //     GD.Print("No specific rarity condition met for item drop (but overall chance passed).");
-        // }
-
-        // droppedTier = 1; //for testing -delete
-        droppedTier = GD.RandRange(1, 5);
-        return droppedTier;
-    }
-
-	private void ResetModStatsList(int tier) {
-		switch (tier) {
-			case 1: tierOneExtractStats = new List<(string, int, int)>() { }; break;
-			case 2: tierTwoExtractStats = new List<(string, int, int)>() { }; break;
-			case 3: tierThreeExtractStats = new List<(string, int, int)>() { }; break;
-			case 4: tierFourExtractStats = new List<(string, int, int)>() { }; break;
-			case 5: tierFiveExtractStats = new List<(string, int, int)>() { }; break;
-		}
-		
-		foreach (var extractData in extractDataList) {
-			if (extractData.Tier != tier) { continue; }
-			switch (tier) {
-				case 1: tierOneExtractStats.Add((extractData.Stat, extractData.MinRoll, extractData.MaxRoll)); break;
-				case 2: tierTwoExtractStats.Add((extractData.Stat, extractData.MinRoll, extractData.MaxRoll)); break;
-				case 3: tierThreeExtractStats.Add((extractData.Stat, extractData.MinRoll, extractData.MaxRoll)); break;
-				case 4: tierFourExtractStats.Add((extractData.Stat, extractData.MinRoll, extractData.MaxRoll)); break;
-				case 5: tierFiveExtractStats.Add((extractData.Stat, extractData.MinRoll, extractData.MaxRoll)); break;
-			}
-		}
-	}
-	
-	private void RollModValues(BaseExtract itemData) {
-	    var tier = itemData.ModTier; //access ModTier directly from the BaseExtract data
-
-	    ResetModStatsList(tier); //reset the list for the chosen tier
-
-	    //get the correct list based on tier
-	    List<(string stat, int min, int max)> targetModStatsList = null;
-	    switch (tier) {
-	        case 1: targetModStatsList = tierOneExtractStats; break;
-	        case 2: targetModStatsList = tierTwoExtractStats; break;
-	        case 3: targetModStatsList = tierThreeExtractStats; break;
-	        case 4: targetModStatsList = tierFourExtractStats; break;
-	        case 5: targetModStatsList = tierFiveExtractStats; break;
-	        default: GD.PushWarning($"Invalid tier {tier} for mod value rolling. No mods rolled."); return;
-	    }
-	    
-	    if (targetModStatsList == null || targetModStatsList.Count == 0) {
-	        GD.PushWarning($"No mod stats available for tier {tier}. No mods rolled.");
-	        return;
-	    }
-
-	    // IMPORTANT: Make a COPY of the list for rolling, so the original lists (tierOneModStats etc.)
-	    // aren't permanently depleted across multiple item drops. if emptied, the next item won't have stats to roll
-	    List<(string stat, int min, int max)> rollingList = new List<(string, int, int)>(targetModStatsList);
-
-	    //initialize qualities to 0
-	    // itemData.ModBaseDamageQuality = 0f;
-	    // itemData.ModBasePierceQuality = 0f;
-	    // itemData.ModBaseCritChanceQuality = 0f;
-	    // itemData.ModBaseCritDamageQuality = 0f;
-	    // itemData.ModBaseShieldQuality = 0f;
-	    // itemData.ModBaseShieldRegenQuality = 0f;
-	    // itemData.ModBaseHealthQuality = 0f;
-	    // itemData.ModBasePickupRangeQuality = 0f;
-	    // itemData.ModBaseSpeedQuality = 0f;
-	    // itemData.ModBaseExtractDropQuality = 0f;
-	    // itemData.ModBaseSucroseDropQuality = 0f;
-	    // itemData.ModBaseExpGainQuality = 0f;
-	    
-	    //apply 'tier' number of mods
-	    for (int i = 0; i < tier; i++) {
-	        if (rollingList.Count == 0) {
-	            GD.PushWarning($"Not enough unique mod stats in rolling list for tier {tier} (applied {i} of {tier} mods).");
-	            break; //break if list becomes empty before applying all mods
-	        }
-
-	        var randomIndex = GD.RandRange(0, rollingList.Count - 1);
-	        var newStat = rollingList[randomIndex];
-	        var finalValue = GD.RandRange(newStat.min, newStat.max);
-	        
-	        //calculate the quality percentage for THIS specific stat
-	        float calculatedQualityPercentage = 0f;
-	        if (newStat.max > 0) { //avoid division by zero if max is 0
-		        calculatedQualityPercentage = ((float)finalValue / newStat.max) * 100f;
-		        calculatedQualityPercentage = (int)Math.Ceiling(calculatedQualityPercentage);
-	        }
-	        
-	        itemData.SetModStatAndValue(newStat.stat, finalValue, calculatedQualityPercentage); //set stat on the BaseExtract data
-	        rollingList.RemoveAt(randomIndex); //remove from the temporary rolling list
-	    }
-	}
-	
-	private void GenerateTempStatsList(BaseExtract item) {
-		tempItemStatsList = new List<(string statName, int value)>();
-		tempItemStatsList.Add(("Damage", item.ModBaseDamage));
-		tempItemStatsList.Add(("Pierce", item.ModBasePierce));
-		tempItemStatsList.Add(("Crit Chance", item.ModBaseCritChance));
-		tempItemStatsList.Add(("Crit Damage", item.ModBaseCritDamage));
-		tempItemStatsList.Add(("Shield", item.ModBaseShield));
-		tempItemStatsList.Add(("Shield Regen", item.ModBaseShieldRegen));
-		tempItemStatsList.Add(("Health", item.ModBaseHealth));
-		tempItemStatsList.Add(("Pickup Range", item.ModBasePickupRange));
-		tempItemStatsList.Add(("Speed", item.ModBaseSpeed));
-		tempItemStatsList.Add(("Extract Drop", item.ModBaseExtractDrop));
-		tempItemStatsList.Add(("Sucrose Drop", item.ModBaseSucroseDrop));
-		tempItemStatsList.Add(("Exp Gain", item.ModBaseExpGain));
-	}
-	
-	private void GenerateItemName(BaseExtract item) {
-		var data = GetExtractDataList();
-        
-		List<(string name, int value, int maxValue, float percent)> stats = new List<(string, int, int, float)>(); //don't delete
-		
-		foreach (var d in data) {
-			if (item.ModTier != d.Tier) { continue; }
-			foreach (var s in tempItemStatsList) {
-				// GD.Print(s.statName + " | " + d.Stat);
-				if (s.statName != d.Stat) { continue; }
-				// GD.Print("found matching stat");
-				var percent = ((float)s.value / (float)d.MaxRoll) * 100;
-				stats.Add((s.statName, s.value, d.MaxRoll, percent));
-				//divide value / maxroll to get percent
-			}
-		}
-
-		var bestStat = "";
-		var currentHighest = 0f;
-		foreach (var s in stats) {
-			// GD.Print(s.name + ": " + s.value + "\nmax: " + s.maxValue + "\npercent: " + s.percent);
-			// GD.Print(s.name + " max: " + s.maxValue + " | " + s.percent + "%");
-			if(s.percent < currentHighest) { continue; }
-			bestStat = s.name;
-			currentHighest = s.percent;
-		}
-        
-		// GD.Print("highest = " + bestStat + ": " +  currentHighest);
-        
-		item.Name = bestStat;
-	}
-
-	private void SetItemQuality(BaseExtract item) {
-    if (item == null) {
-        GD.PushWarning("SetItemQuality called with a null item.");
-        return;
-    }
-
-    var allPossibleModDefinitions = GetExtractDataList(); // Get all possible mod definitions
-
-    float totalActualRolledValue = 0;
-    float totalMaxPotentialForPresentStats = 0;
-
-    // GD.Print($"Calculating quality for item: ID={item.Id}, Tier={item.ModTier}");
-
-    // Iterate through all *possible* mods to find matches for the item's tier
-    foreach (var modDefinition in allPossibleModDefinitions) {
-        if (item.ModTier != modDefinition.Tier) { continue; } //skip mods not of the item's tier
-
-        // Check if the item actually has this stat rolled
-        // (This relies on GetActualRolledStatValueFromItem returning > 0
-        // or some other way to know if the stat is 'active' on the item)
-        int actualRolledValueForThisStat = GetActualRolledStatValueFromItem(item, modDefinition.Stat);
-
-        //only include this stat in the quality calculation if it's present on the item
-        if (actualRolledValueForThisStat > 0) { //stat is "active" on the item
-            totalActualRolledValue += actualRolledValueForThisStat;
-            totalMaxPotentialForPresentStats += modDefinition.MaxRoll;
-            // GD.Print($"Stat Present: {modDefinition.Stat}, Rolled: {actualRolledValueForThisStat}, Max: {modDefinition.MaxRoll}. Current Total Rolled: {totalActualRolledValue}, Current Total Max: {totalMaxPotentialForPresentStats}");
-        }
-        // else
-        // {
-        //     // GD.Print($"Stat Not Present or Zero: {modDefinition.Stat}. Not including in quality calculation.");
-        // }
-    }
-
-    if (totalMaxPotentialForPresentStats == 0) {
-        GD.Print($"No active stats found on item ID={item.Id} for Tier {item.ModTier} or their total max potential is zero. Setting quality to 0.");
-        item.ModQuality = 0f;
-        return;
-    }
-
-    item.ModQuality = (totalActualRolledValue / totalMaxPotentialForPresentStats) * 100f;
-    // GD.Print($"Item ID={item.Id}, Tier={item.ModTier} - Total Rolled (Present Stats): {totalActualRolledValue}, Total Max (Present Stats): {totalMaxPotentialForPresentStats}, Quality: {item.ModQuality}%");
-}
-
-	//helper function to get the actual rolled value of a specific stat from the item
-	private int GetActualRolledStatValueFromItem(BaseExtract item, string statName) {
-	    switch (statName) { //must exactly match string in ExtractDataList
-	        case "Damage": return item.ModBaseDamage;
-	        case "Pierce": return item.ModBasePierce;
-	        case "Crit Chance": return item.ModBaseCritChance;
-	        case "Crit Damage": return item.ModBaseCritDamage;
-	        case "Shield": return item.ModBaseShield;
-	        case "Shield Regen": return item.ModBaseShieldRegen;
-	        case "Health": return item.ModBaseHealth;
-	        case "Pickup Range": return item.ModBasePickupRange;
-	        case "Speed": return item.ModBaseSpeed;
-	        case "Extract Drop": return item.ModBaseExtractDrop;
-	        case "Sucrose Drop": return item.ModBaseSucroseDrop;
-	        case "Exp Gain": return item.ModBaseExpGain;
-	        default:
-	            // GD.Print($"Warning: Unknown stat name '{statName}' in GetActualRolledStatValueFromItem for item ID {item.Id}. Assuming 0.");
-	            return 0; //if the stat isn't recognized or isn't on the item, it contributes 0
-	    }
 	}
 	
 	public void ChangeSucrose(double amount) {
@@ -813,7 +367,7 @@ public partial class Main : Node2D {
 		ExtractGained,
 	}
 	
-	private void ShowPopupInfo(PopupEventType eventType, string subjectName = null, int amount = 0, string specificItemName = null) {
+	public void ShowPopupInfo(PopupEventType eventType, string subjectName = null, int amount = 0, string specificItemName = null) {
 		var popupText = popupTextScene.Instantiate<PopupText>();
 		var text = "";
 		var color = tooltips.GetDecimalColor("pink");
@@ -1077,13 +631,13 @@ public partial class Main : Node2D {
 	
 	//player health
 	public int GetPlayerLevelHealth() { return vars.PlayerLevel * 10; }
-	public int GetPlayerModHealth() { return ui.GetModStatValue("Health"); }
+	public int GetPlayerModHealth() { return ui.GetExtractStatValue("Health"); }
 	public int GetPlayerMaxHealth() { return GetPlayerLevelHealth() + GetPlayerModHealth(); }
 
 	//player damage
 	public double GetPlayerLevelDamage() { return Math.Ceiling(Math.Pow(vars.PlayerLevel, 1.35)); }
 	// public double GetPlayerLevelDamage() { return 0; } //for testing -delete
-	public double GetPlayerModDamage() { return ui.GetModStatValue("Damage"); }
+	public double GetPlayerExtractDamage() { return ui.GetExtractStatValue("Damage"); }
 	public double GetPlayerEquippedWeaponDamage() { return currentWeaponData.Damage; }
 
 	public float GetSkillDamageEffect(string bulletType) {
@@ -1099,7 +653,7 @@ public partial class Main : Node2D {
 	}
 	
 	public double GetPlayerFinalDamage() {
-		var final = GetPlayerLevelDamage() + GetPlayerModDamage() + GetPlayerEquippedWeaponDamage();
+		var final = GetPlayerLevelDamage() + GetPlayerExtractDamage() + GetPlayerEquippedWeaponDamage();
 		final *= GetSkillDamageEffect(currentWeaponData.Id);
 		return Math.Ceiling(final);
 	}
@@ -1107,7 +661,7 @@ public partial class Main : Node2D {
 	
 	//pierce
 	public int GetPlayerFinalPierce() {
-		var final = GetPlayerModPierce() + GetPlayerEquippedWeaponPierce();
+		var final = GetPlayerExtractPierce() + GetPlayerEquippedWeaponPierce();
 		final += (int) GetSkillPierceEffect(currentWeaponData.Id);
 		return final;
 	}
@@ -1124,13 +678,13 @@ public partial class Main : Node2D {
 		return 0;
 	}
 	
-	public int GetPlayerModPierce() { return ui.GetModStatValue("Pierce"); }
+	public int GetPlayerExtractPierce() { return ui.GetExtractStatValue("Pierce"); }
 	public int GetPlayerEquippedWeaponPierce() { return currentWeaponData.Pierce; }
 	//pierce
 	
 	//crit
 	public int GetPlayerFinalCritChance() {
-		var final = GetPlayerModCritChance() + GetPlayerEquippedWeaponCritChance();
+		var final = GetPlayerExtractCritChance() + GetPlayerEquippedWeaponCritChance();
 		final += (int) GetSkillCritChanceEffect(currentWeaponData.Id);
 		return final;
 	}
@@ -1146,22 +700,22 @@ public partial class Main : Node2D {
 		return 0;
 	}
 	
-	public int GetPlayerModCritChance() { return ui.GetModStatValue("Crit Chance"); }
+	public int GetPlayerExtractCritChance() { return ui.GetExtractStatValue("Crit Chance"); }
 	public int GetPlayerEquippedWeaponCritChance() { return currentWeaponData.Crit; }
 	
-	public int GetPlayerFinalCritDamage() { return GetPlayerModCritDamage() + GetPlayerEquippedWeaponCritDamage(); }
-	public int GetPlayerModCritDamage() { return ui.GetModStatValue("Crit Damage"); }
+	public int GetPlayerFinalCritDamage() { return GetPlayerExtractCritDamage() + GetPlayerEquippedWeaponCritDamage(); }
+	public int GetPlayerExtractCritDamage() { return ui.GetExtractStatValue("Crit Damage"); }
 	public int GetPlayerEquippedWeaponCritDamage() { return currentWeaponData.CritDamage; }
 	//crit
 	
 	//knockback
 	public int GetPlayerFinalKnockback() {
-		var final = GetPlayerModKnockback() + GetPlayerEquippedWeaponKnockback();
+		var final = GetPlayerExtractKnockback() + GetPlayerEquippedWeaponKnockback();
 		final += GetSkillKnockbackEffect(currentWeaponData.Id);
 		return (int) Math.Ceiling(final);
 	}
 	
-	public double GetPlayerModKnockback() {
+	public double GetPlayerExtractKnockback() {
 		return 0;
 		// return ui.GetModStatValue("Knockback"); //DOESN'T YET EXIST
 	}
@@ -1355,18 +909,18 @@ public partial class Main : Node2D {
 	
 	//player speed
 	public int GetPlayerLevelSpeed() { return 1200 + (vars.PlayerLevel * 5); }
-	public int GetPlayerModSpeed() { return ui.GetModStatValue("Speed"); }
+	public int GetPlayerModSpeed() { return ui.GetExtractStatValue("Speed"); }
 	// public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerModSpeed() + GetTinctureSpeed(); }
 	public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
 	
 	//player shield
 	public int GetPlayerLevelShield() { return vars.PlayerLevel + 5; }
-	public int GetPlayerModShield() { return ui.GetModStatValue("Shield"); }
+	public int GetPlayerModShield() { return ui.GetExtractStatValue("Shield"); }
 	public int GetPlayerFinalShield() { return GetPlayerLevelShield() + GetPlayerModShield(); }
 	
 	//player shield regen
 	public int GetPlayerLevelShieldRegen() { return 1; }
-	public int GetPlayerModShieldRegen() { return ui.GetModStatValue("Shield Regen"); }
+	public int GetPlayerModShieldRegen() { return ui.GetExtractStatValue("Shield Regen"); }
 	public int GetPlayerFinalShieldRegen() { return GetPlayerLevelShieldRegen() + GetPlayerModShieldRegen(); }
 	
 	public float GetFinalWeaponSpeed() { return currentWeaponData.Speed; }
@@ -1375,7 +929,7 @@ public partial class Main : Node2D {
 	//extract drop
 	public float GetPlayerLevelExtractDropChance() { return vars.PlayerLevel * .01f; }
 	public float GetAreaRankExtractDropChance() { return GetAreaRank(vars.CurrentArea) * .1f; }
-	public float GetEquippedExtractsDropChance() { return ui.GetModStatValue("Extract Drop") * .1f; }
+	public float GetEquippedExtractsDropChance() { return ui.GetExtractStatValue("Extract Drop") * .1f; }
 	public float GetPlayerFinalExtractDropChanceDisplay() { return (GetPlayerLevelExtractDropChance() + GetEquippedExtractsDropChance()); }
 	public float GetPlayerFinalExtractDropChance(int enemyRank) { //probably not done
 		// return 100; //for testing -delete
@@ -1386,18 +940,18 @@ public partial class Main : Node2D {
 	
 	//sucrose drop
 	public int GetPlayerLevelSucroseDrop() { return 0; }
-	public int GetPlayerModSucroseDrop() { return ui.GetModStatValue("Sucrose Drop"); }
+	public int GetPlayerModSucroseDrop() { return ui.GetExtractStatValue("Sucrose Drop"); }
 	// public int GetPlayerFinalSucroseDrop() { return GetPlayerLevelSucroseDrop() + GetPlayerModSucroseDrop(); } //prev
 	public int GetPlayerFinalSucroseDrop() { return 100 + GetPlayerModSucroseDrop(); }
 	
 	//exp drop
 	public int GetPlayerLevelExpDrop() { return 0; }
-	public int GetPlayerModExpDrop() { return ui.GetModStatValue("Exp Drop"); }
+	public int GetPlayerModExpDrop() { return ui.GetExtractStatValue("Exp Drop"); }
 	public int GetPlayerFinalExpDrop() { return 100 + GetPlayerModExpDrop(); }
 	
 	//player pickup range
 	public int GetPlayerLevelPickupRange() { return (vars.PlayerLevel * 5) + 500; }
-	public int GetPlayerModPickupRange() { return ui.GetModStatValue("Pickup Range"); }
+	public int GetPlayerModPickupRange() { return ui.GetExtractStatValue("Pickup Range"); }
 	public int GetPlayerFinalPickupRange() { return (GetPlayerLevelPickupRange() + GetPlayerModPickupRange()); }
 
 	public void SetCurrentWeaponData(int data) {
@@ -1421,11 +975,6 @@ public partial class Main : Node2D {
 	
 	public bool GetInventoryFull() { return ui.GetExtractsInventoryFull(); }
 	
-	public BaseExtract GetItemById(string id) {
-		// foreach (var item in allInventoryItems) { if (item.Id.Equals(id)) { return item; } }
-		return null;
-	}
-
 	public int GetAreaRank(string area) {
 		switch (area) {
 			case "Plain": return vars.PlainRank;
@@ -1478,97 +1027,6 @@ public partial class Main : Node2D {
 		weaponDataList.Add(new WeaponData(aoeTexture, aoeCrosshairs, "bulletSmasher", "Smasher", "A large AoE with knockback",
 			5, "auto", 49, 5, 80, 1800, 8, 30, 5, 2, 0, 0, 3));
 		SetCurrentWeaponData(0); //DON'T DO THIS HERE -actually maybe keep here
-	}
-
-	public List<ExtractData> GetExtractDataList() { return extractDataList; }
-	
-	private void BuildExtractData() {
-		extractDataList = new List<ExtractData>(); //*stat names must match names in SetModStatAndValue
-		
-		// extractDataList.Add(new ExtractData("Crit Chance", 1, 1, 2)); //no t1 critchance
-		// extractDataList.Add(new ExtractData("Crit Chance", 2, 1, 3)); //no t2 critchance
-		extractDataList.Add(new ExtractData("Crit Chance", 3, 1, 2));
-		extractDataList.Add(new ExtractData("Crit Chance", 4, 2, 3));
-		extractDataList.Add(new ExtractData("Crit Chance", 5, 3, 4));
-		
-		// extractDataList.Add(new ExtractData("CritDamage", 1, 0, 0)); //no t1 critdamage
-		extractDataList.Add(new ExtractData("Crit Damage", 2, 5, 10));
-		extractDataList.Add(new ExtractData("Crit Damage", 3, 10, 20));
-		extractDataList.Add(new ExtractData("Crit Damage", 4, 20, 40));
-		extractDataList.Add(new ExtractData("Crit Damage", 5, 40, 50));
-		
-		extractDataList.Add(new ExtractData("Damage", 1, 1, 5));
-		extractDataList.Add(new ExtractData("Damage", 2, 5, 10));
-		extractDataList.Add(new ExtractData("Damage", 3, 10, 20));
-		extractDataList.Add(new ExtractData("Damage", 4, 20, 30));
-		extractDataList.Add(new ExtractData("Damage", 5, 30, 50));
-		
-		extractDataList.Add(new ExtractData("Exp Gain", 1, 1, 5));
-		extractDataList.Add(new ExtractData("Exp Gain", 2, 5, 10));
-		extractDataList.Add(new ExtractData("Exp Gain", 3, 10, 20));
-		extractDataList.Add(new ExtractData("Exp Gain", 4, 20, 30));
-		extractDataList.Add(new ExtractData("Exp Gain", 5, 30, 50));
-		
-		// extractDataList.Add(new ExtractData("Extract Drop", 1, 0, 0)); //no t1 extract
-		extractDataList.Add(new ExtractData("Extract Drop", 2, 1, 2));
-		extractDataList.Add(new ExtractData("Extract Drop", 3, 2, 3));
-		extractDataList.Add(new ExtractData("Extract Drop", 4, 3, 4));
-		extractDataList.Add(new ExtractData("Extract Drop", 5, 4, 5));
-	
-		extractDataList.Add(new ExtractData("Health", 1, 1, 5));
-		extractDataList.Add(new ExtractData("Health", 2, 5, 10));
-		extractDataList.Add(new ExtractData("Health", 3, 10, 20));
-		extractDataList.Add(new ExtractData("Health", 4, 20, 30));
-		extractDataList.Add(new ExtractData("Health", 5, 30, 50));
-		
-		extractDataList.Add(new ExtractData("Pickup Range", 1, 1, 5));
-		extractDataList.Add(new ExtractData("Pickup Range", 2, 5, 10));
-		extractDataList.Add(new ExtractData("Pickup Range", 3, 10, 20));
-		extractDataList.Add(new ExtractData("Pickup Range", 4, 20, 30));
-		extractDataList.Add(new ExtractData("Pickup Range", 5, 30, 50));
-		
-		// extractDataList.Add(new ExtractData("Pierce", 1, 0, 0)); //no t1 pierce
-		extractDataList.Add(new ExtractData("Pierce", 2, 1, 1));
-		extractDataList.Add(new ExtractData("Pierce", 3, 1, 2));
-		extractDataList.Add(new ExtractData("Pierce", 4, 2, 3));
-		extractDataList.Add(new ExtractData("Pierce", 5, 2, 4));
-		
-		extractDataList.Add(new ExtractData("Shield", 1, 1, 2));
-		extractDataList.Add(new ExtractData("Shield", 2, 1, 3));
-		extractDataList.Add(new ExtractData("Shield", 3, 2, 4));
-		extractDataList.Add(new ExtractData("Shield", 4, 4, 5));
-		extractDataList.Add(new ExtractData("Shield", 5, 5, 10));
-		
-		extractDataList.Add(new ExtractData("Speed", 1, 1, 5));
-		extractDataList.Add(new ExtractData("Speed", 2, 1, 10));
-		extractDataList.Add(new ExtractData("Speed", 3, 5, 20));
-		extractDataList.Add(new ExtractData("Speed", 4, 5, 30));
-		extractDataList.Add(new ExtractData("Speed", 5, 10, 40));
-		
-		extractDataList.Add(new ExtractData("Sucrose Drop", 1, 1, 5));
-		extractDataList.Add(new ExtractData("Sucrose Drop", 2, 5, 10));
-		extractDataList.Add(new ExtractData("Sucrose Drop", 3, 10, 20));
-		extractDataList.Add(new ExtractData("Sucrose Drop", 4, 20, 30));
-		extractDataList.Add(new ExtractData("Sucrose Drop", 5, 30, 50));
-		
-		// extractDataList.Add(new ExtractData("ShieldRegen", 1, 0, 0)); //no shield regen
-	}
-	
-	
-	public class ExtractData {
-		public string Stat;
-		public int Tier;
-		public int MinRoll;
-		public int MaxRoll;
-    
-		public ExtractData() { }
-
-		public ExtractData(string stat, int tier, int minRoll, int maxRoll) {
-			Tier = tier;
-			Stat = stat;
-			MinRoll =  minRoll;
-			MaxRoll =  maxRoll;
-		}
 	}
 
 	//dev

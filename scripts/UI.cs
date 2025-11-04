@@ -929,24 +929,24 @@ public partial class UI : CanvasLayer {
         }
     }
     
-    public int GetModStatValue(string stat) {
+    public int GetExtractStatValue(string stat) {
         var value = 0;
-        foreach (var mod in allEquippedExtractSlots) {
-            if (!mod.GetFull()) { continue; }
+        foreach (var extract in allEquippedExtractSlots) {
+            if (!extract.GetFull()) { continue; }
 
             switch (stat) {
-                case "Damage": value += mod.GetExtract().ModBaseDamage; break;
-                case "Pierce": value += mod.GetExtract().ModBasePierce; break;
-                case "Crit Chance": value += mod.GetExtract().ModBaseCritChance; break;
-                case "Crit Damage": value += mod.GetExtract().ModBaseCritDamage; break;
-                case "Shield": value += mod.GetExtract().ModBaseShield; break;
-                case "Shield Regen": value += mod.GetExtract().ModBaseShieldRegen; break;
-                case "Health": value += mod.GetExtract().ModBaseHealth; break;
-                case "Pickup Range": value += mod.GetExtract().ModBasePickupRange; break;
-                case "Speed": value += mod.GetExtract().ModBaseSpeed; break;
-                case "Extract Drop": value += mod.GetExtract().ModBaseExtractDrop; break;
-                case "Sucrose Drop": value += mod.GetExtract().ModBaseSucroseDrop; break;
-                case "Exp Drop": value += mod.GetExtract().ModBaseExpGain; break;
+                case "Damage": value += extract.GetExtract().ExtractBaseDamage; break;
+                case "Pierce": value += extract.GetExtract().ExtractBasePierce; break;
+                case "Crit Chance": value += extract.GetExtract().ExtractBaseCritChance; break;
+                case "Crit Damage": value += extract.GetExtract().ExtractBaseCritDamage; break;
+                case "Shield": value += extract.GetExtract().ExtractBaseShield; break;
+                case "Shield Regen": value += extract.GetExtract().ExtractBaseShieldRegen; break;
+                case "Health": value += extract.GetExtract().ExtractBaseHealth; break;
+                case "Pickup Range": value += extract.GetExtract().ExtractBasePickupRange; break;
+                case "Speed": value += extract.GetExtract().ExtractBaseSpeed; break;
+                case "Extract Drop": value += extract.GetExtract().ExtractBaseExtractDrop; break;
+                case "Sucrose Drop": value += extract.GetExtract().ExtractBaseSucroseDrop; break;
+                case "Exp Drop": value += extract.GetExtract().ExtractBaseExpGain; break;
             }
         }
         return value;
@@ -1122,7 +1122,7 @@ public partial class UI : CanvasLayer {
                 float damageBonusPercent = main.GetSkillPointsEffect(skillId, skillPoints);
                 double totalUnboostedDamage = selectedWeaponData.Damage + main.GetPlayerLevelDamage(); // + main.GetPlayerModDamage() not used here
                 var skillBonusAmount = totalUnboostedDamage * damageBonusPercent; // e.g., 55 * 0.5 = 27.5
-                return [(totalUnboostedDamage, skillBonusAmount, main.GetPlayerModDamage())];
+                return [(totalUnboostedDamage, skillBonusAmount, main.GetPlayerExtractDamage())];
             
             case "Reload":
                 double baseReloadTime = selectedWeaponData.ReloadSpeed;
@@ -1141,15 +1141,15 @@ public partial class UI : CanvasLayer {
             case "Pierce":
                 baseStat = selectedWeaponData.Pierce;
                 double pierceBonusAmount = main.GetSkillPierceEffect(weaponId); //additive number of pierce points
-                return [(baseStat, pierceBonusAmount, main.GetPlayerModPierce())];
+                return [(baseStat, pierceBonusAmount, main.GetPlayerExtractPierce())];
             case "Crit":
                 baseStat = selectedWeaponData.Crit;
                 double critBonusAmount = main.GetSkillCritChanceEffect(weaponId); //additive percentage point increase (e.g., 5.0)
-                return [(baseStat, critBonusAmount, main.GetPlayerModCritChance())];
+                return [(baseStat, critBonusAmount, main.GetPlayerExtractCritChance())];
             case "CritDamage":
                 baseStat = selectedWeaponData.CritDamage;
                 double critDamageBonusAmount = 0; 
-                return [(baseStat, critDamageBonusAmount, main.GetPlayerModCritDamage())];
+                return [(baseStat, critDamageBonusAmount, main.GetPlayerExtractCritDamage())];
 
             default:
                 return [(0, 0, 0)];
@@ -1365,13 +1365,13 @@ public partial class UI : CanvasLayer {
             case 0:
                 break;
             case 1:
-                inventoryExtractsData = new Array<BaseExtract>(inventoryExtractsData.OrderBy(item => item.Name).ThenBy(item => item.ModTier).ToList());
+                inventoryExtractsData = new Array<BaseExtract>(inventoryExtractsData.OrderBy(item => item.Name).ThenBy(item => item.ExtractTier).ToList());
                 break;
             case 2:
-                inventoryExtractsData = new Array<BaseExtract>(inventoryExtractsData.OrderBy(item => item.ModTier).ThenBy(item => item.Name).ToList());
+                inventoryExtractsData = new Array<BaseExtract>(inventoryExtractsData.OrderBy(item => item.ExtractTier).ThenBy(item => item.Name).ToList());
                 break;
             case 3:
-                inventoryExtractsData = new Array<BaseExtract>(inventoryExtractsData.OrderBy(item => item.ModQuality).ThenBy(item => item.Name).ToList());
+                inventoryExtractsData = new Array<BaseExtract>(inventoryExtractsData.OrderBy(item => item.ExtractQuality).ThenBy(item => item.Name).ToList());
                 break;
         }
         EmitSignal(SignalName.ExtractInventoryChanged);

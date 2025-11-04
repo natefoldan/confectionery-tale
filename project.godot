@@ -20,6 +20,7 @@ config/icon="res://icon.svg"
 Variables="*res://scripts/Variables.cs"
 WeaponData="*res://scripts/WeaponData.cs"
 TooltipHandler="*res://scripts/TooltipHandler.cs"
+ExtractManager="*res://scenes/ExtractManager.tscn"
 
 [display]
 

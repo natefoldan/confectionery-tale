@@ -1,10 +1,25 @@
 [gd_scene load_steps=4 format=3 uid="uid://cs5jwh3o7tq8q"]
 
 [ext_resource type="Script" uid="uid://u874v45tna6d" path="res://scripts/WorldObject.cs" id="1_sa2ys"]
-[ext_resource type="Texture2D" uid="uid://81qui1xxewaw" path="res://assets/popup-two.png" id="2_8uidd"]
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_f5chs"]
 radius = 54.00926
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_8uidd"]
+border_width_left = 8
+border_width_top = 8
+border_width_right = 8
+border_width_bottom = 8
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 8
+corner_radius_top_right = 8
+corner_radius_bottom_right = 8
+corner_radius_bottom_left = 8
+corner_detail = 6
+expand_margin_left = 16.0
+expand_margin_top = 16.0
+expand_margin_right = 16.0
+expand_margin_bottom = 16.0
 
 [node name="WorldObject" type="StaticBody2D" groups=["worldobject"]]
 collision_layer = 128
@@ -40,40 +55,15 @@ theme_override_font_sizes/font_size = 128
 text = "99:99"
 vertical_alignment = 1
 
-[node name="Popup" type="MarginContainer" parent="."]
+[node name="Popup" type="Label" parent="."]
 visible = false
-offset_right = 175.79999
-offset_bottom = 28.0
-scale = Vector2(5, 5)
-size_flags_horizontal = 4
-size_flags_vertical = 4
-
-[node name="NinePatchRect" type="NinePatchRect" parent="Popup"]
-layout_mode = 2
-texture = ExtResource("2_8uidd")
-region_rect = Rect2(2.3032074, 0.35533714, 115.289444, 119.28915)
-patch_margin_left = 6
-patch_margin_top = 6
-patch_margin_right = 6
-patch_margin_bottom = 6
-axis_stretch_horizontal = 1
-axis_stretch_vertical = 1
-
-[node name="MarginContainer" type="MarginContainer" parent="Popup"]
-layout_mode = 2
-theme_override_constants/margin_left = 12
-theme_override_constants/margin_top = 12
-theme_override_constants/margin_right = 12
-theme_override_constants/margin_bottom = 12
-
-[node name="CenterContainer" type="CenterContainer" parent="Popup/MarginContainer"]
-layout_mode = 2
-
-[node name="Label" type="Label" parent="Popup/MarginContainer/CenterContainer"]
-custom_minimum_size = Vector2(150, 0)
-layout_mode = 2
-theme_override_colors/font_color = Color(0, 0, 0, 1)
-text = "popup text"
+z_index = 5
+custom_minimum_size = Vector2(600, 0)
+offset_right = 40.0
+offset_bottom = 16.0
+theme_override_font_sizes/font_size = 72
+theme_override_styles/normal = SubResource("StyleBoxFlat_8uidd")
+text = "[E] test test test test "
 horizontal_alignment = 1
 vertical_alignment = 1
 autowrap_mode = 3

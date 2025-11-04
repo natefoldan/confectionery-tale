@@ -6,13 +6,6 @@ namespace ConfectioneryTale.scripts;
 
 //this script solely handles visual drop
 public partial class ItemDrop : RigidBody2D {
-    [Export] public Texture2D tierOneExtractTexture;
-    [Export] public Texture2D tierTwoExtractTexture;
-    [Export] public Texture2D tierThreeExtractTexture;
-    [Export] public Texture2D tierFourExtractTexture;
-    [Export] public Texture2D tierFiveExtractTexture;
-    [Export] public Texture2D tierSixExtractTexture;
-
     private Variables vars;
     private Sprite2D sprite;
 
@@ -92,7 +85,7 @@ public partial class ItemDrop : RigidBody2D {
         fallDistance = GD.RandRange(100, 250);
         fallDuration = (float)GD.RandRange(.1f, .2f);
 
-        GD.Print(fallDuration);
+        // GD.Print(fallDuration);
         
         LinearVelocity = Vector2.Zero;
         AngularVelocity = 0f;

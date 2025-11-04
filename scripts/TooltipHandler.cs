@@ -67,28 +67,28 @@ public partial class TooltipHandler : Node {
         allStatLabels = new List<RichTextLabel>();
         statsList = new List<(string statName, float value)>();
 
-        AddStatToTooltip("Damage", extract.ModBaseDamage, extract.ModBaseDamageQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Pierce", extract.ModBasePierce, extract.ModBasePierceQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Crit Chance", extract.ModBaseCritChance, extract.ModBaseCritChanceQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Crit Damage", extract.ModBaseCritDamage, extract.ModBaseCritDamageQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Shield", extract.ModBaseShield, extract.ModBaseShieldQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Shield Regen", extract.ModBaseShieldRegen, extract.ModBaseShieldRegenQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Health", extract.ModBaseHealth, extract.ModBaseHealthQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Pickup Range", extract.ModBasePickupRange, extract.ModBasePickupRangeQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Speed", extract.ModBaseSpeed, extract.ModBaseSpeedQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Extract Drop", extract.ModBaseExtractDrop * .1f, extract.ModBaseExtractDropQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Sucrose Drop", extract.ModBaseSucroseDrop, extract.ModBaseSucroseDropQuality, baseLabel, statcontainer, statsList, allStatLabels);
-        AddStatToTooltip("Exp Gain", extract.ModBaseExpGain, extract.ModBaseExpGainQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Damage", extract.ExtractBaseDamage, extract.ExtractBaseDamageQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Pierce", extract.ExtractBasePierce, extract.ExtractBasePierceQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Crit Chance", extract.ExtractBaseCritChance, extract.ExtractBaseCritChanceQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Crit Damage", extract.ExtractBaseCritDamage, extract.ExtractBaseCritDamageQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Shield", extract.ExtractBaseShield, extract.ExtractBaseShieldQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Shield Regen", extract.ExtractBaseShieldRegen, extract.ExtractBaseShieldRegenQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Health", extract.ExtractBaseHealth, extract.ExtractBaseHealthQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Pickup Range", extract.ExtractBasePickupRange, extract.ExtractBasePickupRangeQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Speed", extract.ExtractBaseSpeed, extract.ExtractBaseSpeedQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Extract Drop", extract.ExtractBaseExtractDrop * .1f, extract.ExtractBaseExtractDropQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Sucrose Drop", extract.ExtractBaseSucroseDrop, extract.ExtractBaseSucroseDropQuality, baseLabel, statcontainer, statsList, allStatLabels);
+        AddStatToTooltip("Exp Gain", extract.ExtractBaseExpGain, extract.ExtractBaseExpGainQuality, baseLabel, statcontainer, statsList, allStatLabels);
         
         var tierLabel = tooltip.GetNode<Label>("Tier");
         tierLabel.Show();
         // tierLabel.Text = "Tier " + extract.ModTier;
-        tierLabel.Text = "T" + extract.ModTier;
-        tierLabel.Set("theme_override_colors/font_color", colorArray[extract.ModTier - 1]);
+        tierLabel.Text = "T" + extract.ExtractTier;
+        tierLabel.Set("theme_override_colors/font_color", colorArray[extract.ExtractTier - 1]);
         
         var potencyLabel = tooltip.GetNode<RichTextLabel>("Potency");
         potencyLabel.Show();
-        var roundedPotency = Math.Ceiling(extract.ModQuality);
+        var roundedPotency = Math.Ceiling(extract.ExtractQuality);
         
         // if (roundedPotency >= 100) { potencyLabel.Text = $"{colorOrangeString}PERFECT"; } //ORIGINAL
         // else if (roundedPotency >= 75) { potencyLabel.Text = $"Potency: {colorPurpleString}{roundedPotency}%"; }
@@ -103,7 +103,7 @@ public partial class TooltipHandler : Node {
         
         var nameLabel = tooltip.GetNode<Label>("Name");
         nameLabel.Text = extract.Name + " Extract";
-        nameLabel.Set("theme_override_colors/font_color", colorArray[extract.ModTier - 1]);
+        nameLabel.Set("theme_override_colors/font_color", colorArray[extract.ExtractTier - 1]);
         
         var sizeY = 120 + (statsList.Count * 28); //not a great way to do it, tier might have a different number of stats
         
@@ -191,18 +191,18 @@ public partial class TooltipHandler : Node {
             case "Damage":
                 return [(
                     (float) Math.Ceiling(main.GetPlayerLevelDamage()),
-                    (float) Math.Ceiling(main.GetPlayerModDamage()),
+                    (float) Math.Ceiling(main.GetPlayerExtractDamage()),
                     (float) Math.Ceiling(baseWeaponDamage * skillMultiplier))];
             case "Health":
                 return [(main.GetPlayerLevelHealth(), main.GetPlayerModHealth(), 0)];
             case "Pierce":
-                return [(0, main.GetPlayerModPierce(), main.GetPlayerEquippedWeaponPierce())];
+                return [(0, main.GetPlayerExtractPierce(), main.GetPlayerEquippedWeaponPierce())];
             case "Range":
                 return [(main.GetPlayerLevelPickupRange(), main.GetPlayerModPickupRange(), 0)];
             case "CritChance":
-                return [(0, main.GetPlayerModCritChance(), main.GetPlayerEquippedWeaponCritChance())];
+                return [(0, main.GetPlayerExtractCritChance(), main.GetPlayerEquippedWeaponCritChance())];
             case "CritDamage":
-                return [(0, main.GetPlayerModCritDamage(), main.GetPlayerEquippedWeaponCritDamage())];
+                return [(0, main.GetPlayerExtractCritDamage(), main.GetPlayerEquippedWeaponCritDamage())];
             case "Speed":
                 return [(main.GetPlayerLevelSpeed() / 100, main.GetPlayerModSpeed() / 100, 0)];
             case "Shield":

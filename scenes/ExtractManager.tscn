@@ -1,0 +1,20 @@
+[gd_scene load_steps=9 format=3 uid="uid://5ohp8j6jg6rv"]
+
+[ext_resource type="Script" uid="uid://dve8uvbcfrqc7" path="res://scripts/ExtractManager.cs" id="1_g08ve"]
+[ext_resource type="PackedScene" uid="uid://jk2eudu66rpo" path="res://scenes/item_drop.tscn" id="2_fimav"]
+[ext_resource type="Texture2D" uid="uid://ujfdkqwkbtsd" path="res://assets/sprites/extract-yellow.png" id="3_kvr2s"]
+[ext_resource type="Texture2D" uid="uid://dhfbit5so0kc3" path="res://assets/sprites/extract-green.png" id="4_4kku7"]
+[ext_resource type="Texture2D" uid="uid://dqugsl85n1bst" path="res://assets/sprites/extract-blue.png" id="5_5t1tv"]
+[ext_resource type="Texture2D" uid="uid://c0trb4m4bdawp" path="res://assets/sprites/extract-purple.png" id="6_wlb1m"]
+[ext_resource type="Texture2D" uid="uid://bfjwmajc6l6dy" path="res://assets/sprites/extract-orange.png" id="7_bjdp7"]
+[ext_resource type="Texture2D" uid="uid://ylcir8kcowgw" path="res://assets/sprites/extract-pink.png" id="8_wvm2p"]
+
+[node name="ExtractManager" type="Node"]
+script = ExtResource("1_g08ve")
+itemDropScene = ExtResource("2_fimav")
+tierOneExtractTexture = ExtResource("3_kvr2s")
+tierTwoExtractTexture = ExtResource("4_4kku7")
+tierThreeExtractTexture = ExtResource("5_5t1tv")
+tierFourExtractTexture = ExtResource("6_wlb1m")
+tierFiveExtractTexture = ExtResource("7_bjdp7")
+tierSixExtractTexture = ExtResource("8_wvm2p")

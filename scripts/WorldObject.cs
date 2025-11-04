@@ -36,7 +36,8 @@ public partial class WorldObject : StaticBody2D {
     private Main main;
     private Variables vars;
     private UI ui;
-    private MarginContainer infoPopup;
+    private ExtractManager extractManager;
+    private Label infoPopup;
     
     private int spriteWidth;
     private int spriteHeight;
@@ -53,6 +54,7 @@ public partial class WorldObject : StaticBody2D {
     public override void _Ready() {
         main = GetNode<Main>("/root/Main");
         vars = GetNode<Variables>("/root/Variables");
+        extractManager = GetNode<ExtractManager>("/root/ExtractManager");
         thisSprite = GetNode<Sprite2D>("Sprite2D");
         if (vars.SavedWorldObjectArray == null) { SaveWorldObjectData(); }
         LoadSavedWorldObjectData();
@@ -66,7 +68,7 @@ public partial class WorldObject : StaticBody2D {
         SetCollisionBox();
         SetInteractCollisionRadius();
         if (HasNode("Popup")) { //not needed, they all have popup
-            infoPopup = GetNode<MarginContainer>("Popup");
+            infoPopup = GetNode<Label>("Popup");
             infoPopup.SetAsTopLevel(true);
             HidePopup();
         }
@@ -136,43 +138,35 @@ public partial class WorldObject : StaticBody2D {
         if (infoPopup == null) { return; }
 
         //GD.Print($"interacting with {objectId} has popup: {!hidePopup}");
-        switch (objectId) {
-            case "woDistillery":
-                PopulateDistilleryPopup();
-                break;
-            case "woSoftener":
-                PopulateSoftenerPopup();
-                break;
-        }
-    
-        // --- 1. GET THE POPUP'S SIZE ---
-        // We get this first, so we know how to offset it.
-        // GetRect() works here because infoPopup (TextureRect) is a Control node.
-        var popupRect = infoPopup.GetRect();
+        // switch (objectId) { //not used -delete
+        //     case "woDistillery":
+        //         PopulateDistilleryPopup();
+        //         break;
+        //     case "woSoftener":
+        //         PopulateSoftenerPopup();
+        //         break;
+        // }
 
-        // --- 2. GET THE SPRITE'S LOCAL RECT ---
-        // This gets the sprite's dimensions *before* scaling.
+        PopulatePopupText();
+        
+        //get the popup size
+        var popupRect = infoPopup.GetRect();
         var spriteLocalRect = thisSprite.GetRect();
 
-        // --- 3. FIND THE SPRITE'S LOCAL TOP-CENTER POINT ---
-        // This finds the X-center and the top Y edge of the sprite's texture.
+        //find the local top-center point. this finds the X-center and the top Y edge of the sprite's texture
         var spriteLocalTopCenter = new Vector2(
             spriteLocalRect.Position.X + (spriteLocalRect.Size.X / 2.0f),
             spriteLocalRect.Position.Y
         );
 
-        // --- 4. CONVERT THAT LOCAL POINT TO A GLOBAL POSITION ---
-        // This is the magic. It applies the sprite's GlobalPosition,
-        // GlobalRotation, and GlobalScale to our local point.
+        //convert that local point to a global position
         var spriteGlobalTopCenter = thisSprite.ToGlobal(spriteLocalTopCenter);
 
-        // --- 5. CALCULATE THE POPUP'S FINAL POSITION ---
-        // We set the popup's GlobalPosition (since it's SetAsTopLevel)
         infoPopup.GlobalPosition = new Vector2(
-            // Center the popup over the sprite's top-center
+            //center the popup over the sprite's top-center
             spriteGlobalTopCenter.X - (popupRect.Size.X / 2.0f), 
-            // Place the popup 10 pixels *above* the sprite's top
-            spriteGlobalTopCenter.Y - popupRect.Size.Y - 10 
+            //place the popup 32 pixels *above* the sprite's top
+            spriteGlobalTopCenter.Y - popupRect.Size.Y - 32
         );
     
         infoPopup.Visible = true;
@@ -183,24 +177,16 @@ public partial class WorldObject : StaticBody2D {
         infoPopup.Visible = false;
     }
 
-    private void PopulateDistilleryPopup() {
-        var popupInfo = infoPopup.GetNode<Label>("MarginContainer/CenterContainer/Label");
-        // if (vars.DistilleryBuilt) { //not used
-        //     // popupInfo.Text = "Distillery Built";
-        //     popupInfo.Text = "E"; //show hotkey
-        // } else {
-        //     // popupInfo.Text = "can build: " + ui.CheckCanBuildDistillery();
-        //     popupInfo.Text = "E"; //show hotkey
-        // }
-        popupInfo.Text = "E"; //show hotkey
+    private void PopulatePopupText() {
+        //show hotkey here
+        var hotkey = "E";
+        
+        infoPopup.Text = $"[{hotkey}] {popupDescription}";
+        
+        // vars.CondenserBuilt
+        // vars.RefinerBuilt
     }
     
-    private void PopulateSoftenerPopup() {
-        var popupInfo = infoPopup.GetNode<Label>("MarginContainer/CenterContainer/Label");
-        // popupInfo.Text = "E"; //show hotkey
-        popupInfo.Text = $"{popupDescription}";
-    }
-
     private void UpdateCrackingTimer(double delta) {
         if (!isBeingCracked) { return; }
         //timer decrement, must be in seconds
@@ -268,7 +254,7 @@ public partial class WorldObject : StaticBody2D {
         // if (Pierce > 0) fixedStats.Add("Pierce", Pierce);
         // if (ExpGain > 0) fixedStats.Add("Exp Gain", ExpGain);
 
-        BaseExtract newItem = main.GenerateFixedExtract(Tier, fixedStats);
+        BaseExtract newItem = extractManager.GenerateFixedExtract(Tier, fixedStats);
         ui.AddExtractToInventory(newItem);
         QueueFree();
     }

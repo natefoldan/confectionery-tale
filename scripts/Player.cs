@@ -10,6 +10,7 @@ public partial class Player : CharacterBody2D {
     private Variables vars;
     private UI ui;
     private Main main;
+    private ExtractManager extractManager;
     private TooltipHandler tooltips;
     private PackedScene popupTextScene;
     // private float pushForce = 200.0f;
@@ -93,6 +94,7 @@ public partial class Player : CharacterBody2D {
         vars.ShelteredStateChanged += SetPlayerState;
         ui = GetNode<UI>("/root/Main/UI");
         main = GetNode<Main>("/root/Main");
+        extractManager = GetNode<ExtractManager>("/root/ExtractManager");
         tooltips = GetNode<TooltipHandler>("/root/TooltipHandler");
         popupTextScene = GD.Load<PackedScene>("res://scenes/popup_text.tscn");
         sprite = GetNode<Sprite2D>("Sprite2D");
@@ -837,7 +839,7 @@ public partial class Player : CharacterBody2D {
         }
 
         // Now call Main.GainItem with the actual BaseExtract DATA (the resource)
-        main.GainExtract(itemData); // Pass the BaseExtract DATA, not the ItemDrop NODE
+        extractManager.GainExtract(itemData); // Pass the BaseExtract DATA, not the ItemDrop NODE
 
         // The ItemDrop NODE itself will be QueueFree'd by Main.RemoveItemDropNodeAndData,
         // which is called by Main.GainItem if successfully added to inventory.

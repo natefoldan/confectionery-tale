@@ -19,7 +19,7 @@ public partial class DistillerySlot : TextureRect {
         itemButton = GetNode<TextureButton>("Item");
     }
 	
-    public void AddModToSlot(BaseExtract what) {
+    public void AddExtractToSlot(BaseExtract what) {
         // GD.Print("adding: " + what.Name);
         item = what;
         full = true;
