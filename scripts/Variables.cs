@@ -16,8 +16,8 @@ public partial class Variables : Node {
 	public Array<SavedPortalData> SavedPortalDataArray { get; set; }
 	public Array<SavedWorldObjectData> SavedWorldObjectArray { get; set; }
 	public Array<SavedAssignmentData> SavedAssignmentDataArray { get; set; }
-	// public List<(string area, bool discovered)> discoveredAreas { get; set; } //delete
 	public HashSet<string> DiscoveredAreas { get; set; } = new HashSet<string>();
+	public HashSet<string> SeenTutorials { get; set; } = new HashSet<string>();
 	//public properties for easy access (will be synced to/from savedResources) ---
 	//convenience getters/setters for simple data. For complex data like lists, access savedResources.droppedItems directly.
 	
@@ -295,6 +295,20 @@ public partial class Variables : Node {
         SavedWorldObjectArray = savedResources.SavedWorldObjectArray; //MOVE
         SavedPortalDataArray = savedResources.SavedPortalDataArray; //MOVE
         SavedAssignmentDataArray = savedResources.SavedAssignmentDataArray; //MOVE
+        
+        // SeenTutorials = new HashSet<string>(savedResources.SeenTutorialsList); //DELETE
+        
+        //load the saved list and convert it back into the 'SeenTutorials' HashSet
+        SeenTutorials = savedResources.SeenTutorialsList != null ? [..savedResources.SeenTutorialsList] : [];
+        
+        // Convert the saved list back into the fast 'HashSet' for runtime checks.
+        if (savedResources.DiscoveredAreasList != null) {
+	        DiscoveredAreas = new HashSet<string>(savedResources.DiscoveredAreasList);
+        } else {
+	        // This handles new games or old saves, just in case
+	        DiscoveredAreas = new HashSet<string>();
+        }
+        
         // droppedItems (the Array) is handled by reference, not copied here
     }
 
@@ -363,6 +377,10 @@ public partial class Variables : Node {
         savedResources.SavedPortalDataArray = SavedPortalDataArray;
         savedResources.SavedAssignmentDataArray = SavedAssignmentDataArray;
 
+        // Convert the fast 'HashSet' into a 'Godot.Collections.Array' that can be saved.
+        savedResources.DiscoveredAreasList = new Godot.Collections.Array<string>(DiscoveredAreas);
+        savedResources.SeenTutorialsList = new Godot.Collections.Array<string>(SeenTutorials);
+        
         Error saveResult = ResourceSaver.Save(savedResources, FilePath); // Save the SavedResources instance
         if (saveResult == Error.Ok) {
             // GD.Print($"Game data saved successfully to '{FilePath}'");

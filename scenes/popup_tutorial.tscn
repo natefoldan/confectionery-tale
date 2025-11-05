@@ -1,0 +1,67 @@
+[gd_scene load_steps=3 format=3 uid="uid://dyhvvxyewcasu"]
+
+[ext_resource type="Script" uid="uid://c2qgw3f85wbdk" path="res://scripts/PopupTutorial.cs" id="1_dqgo1"]
+
+[sub_resource type="StyleBoxFlat" id="StyleBoxFlat_f5chs"]
+content_margin_top = 60.0
+bg_color = Color(0.4, 0.7254902, 0.95686275, 1)
+border_width_left = 6
+border_width_top = 6
+border_width_right = 6
+border_width_bottom = 6
+border_color = Color(0, 0, 0, 1)
+corner_radius_top_left = 12
+corner_radius_top_right = 12
+corner_radius_bottom_right = 12
+corner_radius_bottom_left = 12
+expand_margin_left = 16.0
+expand_margin_top = 16.0
+expand_margin_right = 16.0
+expand_margin_bottom = 16.0
+
+[node name="PopupTutorial" type="Button"]
+process_mode = 3
+custom_minimum_size = Vector2(600, 0)
+anchors_preset = 8
+anchor_left = 0.5
+anchor_top = 0.5
+anchor_right = 0.5
+anchor_bottom = 0.5
+offset_left = -4.0
+offset_top = -4.0
+offset_right = 4.0
+offset_bottom = 4.0
+grow_horizontal = 2
+grow_vertical = 2
+focus_mode = 0
+mouse_default_cursor_shape = 2
+theme_override_colors/font_color = Color(1, 1, 1, 1)
+theme_override_colors/font_pressed_color = Color(1, 1, 1, 1)
+theme_override_colors/font_hover_color = Color(1, 1, 1, 1)
+theme_override_constants/line_spacing = 8
+theme_override_font_sizes/font_size = 24
+theme_override_styles/normal = SubResource("StyleBoxFlat_f5chs")
+theme_override_styles/pressed = SubResource("StyleBoxFlat_f5chs")
+theme_override_styles/hover = SubResource("StyleBoxFlat_f5chs")
+theme_override_styles/focus = SubResource("StyleBoxFlat_f5chs")
+text = "Some objects are sealed with a hard candy coating and need to be broken open.
+
+Stand close to them to begin cracking. If the area is left the timer will reset.
+
+Enemies will be slowed when they enter cracking radius. Size and time are determined by Cracking skill level."
+autowrap_mode = 3
+script = ExtResource("1_dqgo1")
+
+[node name="Label" type="Label" parent="."]
+layout_mode = 1
+anchors_preset = 5
+anchor_left = 0.5
+anchor_right = 0.5
+offset_left = -90.0
+offset_right = 90.0
+offset_bottom = 32.0
+grow_horizontal = 2
+theme_override_font_sizes/font_size = 32
+text = "TUTORIAL: CRACKING"
+
+[connection signal="pressed" from="." to="." method="OnClicked"]

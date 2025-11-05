@@ -174,7 +174,15 @@ public partial class UI : CanvasLayer {
     private int currentCharIndex = 0;
     private string[] words; //not used with characters
     private PackedScene popupBoxScene;
+    private PackedScene popupTutorialScene;
     
+    private class TutorialText {
+        public string Header;
+        public string Description;
+    }
+    
+    private System.Collections.Generic.Dictionary<string, TutorialText> tutorialDatabase;
+
     public override void _Ready() {
         vars = GetNode<Variables>("/root/Variables");
 
@@ -189,6 +197,7 @@ public partial class UI : CanvasLayer {
         assignments = GetNode<Assignments>("MainMenu/Assignments");
 
         popupBoxScene = GD.Load<PackedScene>("res://scenes/popup_box.tscn");
+        popupTutorialScene = GD.Load<PackedScene>("res://scenes/popup_tutorial.tscn");
         
         SavedResources savedResourcesInstance = vars.GetSavedResourcesInstance();
         // GD.Print($"UI._Ready: savedResourcesInstance is null? {savedResourcesInstance == null}");
@@ -206,6 +215,7 @@ public partial class UI : CanvasLayer {
         // UpdateTinctureHealthButton(); //delete
         // UpdateTinctureSpeedButton(); //hmm
         // UpdateTinctureConcealButton(); //hmm
+        BuildTutorialDictionary();
     }
 
     public override void _Process(double delta) {
@@ -1615,6 +1625,56 @@ public partial class UI : CanvasLayer {
         }
     }
 
+    public void ShowPopupTutorial(string tutorialId) {
+        //check *saved* list. If the ID is in the set, it's "seen"
+        if (vars.SeenTutorials.Contains(tutorialId)) { return; }
+        
+        //check if it exists. check *in-code* dictionary to get the text
+        if (!tutorialDatabase.TryGetValue(tutorialId, out TutorialText textToShow)) {
+            GD.PrintErr($"Tutorial not found in database: {tutorialId}");
+            return;
+        }
+        
+        GetTree().Paused = true;
+        
+        if (tutorialDatabase.TryGetValue(tutorialId, out TutorialText tutorialData)) {
+            PopupTutorial popup = popupTutorialScene.Instantiate<PopupTutorial>();
+            AddChild(popup);
+
+            popup.SetHeader(tutorialData.Header);
+            popup.SetDescription(tutorialData.Description); // (Assuming you have a function like this)
+        } else {
+            GD.PrintErr($"Error: Tutorial ID '{tutorialId}' not found in database!");
+        }
+        
+        //mark as seen. add the ID to the "seen" list and save the game
+        vars.SeenTutorials.Add(tutorialId);
+        vars.SaveGameData();
+    }
+    
+    private void BuildTutorialDictionary() {
+        tutorialDatabase = new System.Collections.Generic.Dictionary<string, TutorialText> {
+            { "Bullet", new TutorialText { 
+                Header = "Tutorial: Bullets", 
+                Description = "maybe" 
+            }},
+            
+            { "Extract", new TutorialText { 
+                Header = "Tutorial: Extracts", 
+                Description = "Extracts can be equipped in inventory and provide various stats.\n\n" +
+                              "They can be found in the world, dropped by enemies, or created in The Distillery." 
+            }},
+
+            { "Cracking", new TutorialText { 
+                Header = "Tutorial: Cracking", 
+                Description = "Some objects are sealed with a hard candy coating and need to be broken open.\n\n" +
+                              "Stand close to them to begin cracking. If the area is left the timer will reset.\n\n" +
+                              "Enemies will be slowed when they enter cracking radius. Size and time are determined by Cracking skill level." 
+            }}
+            
+        };
+    }
+    
     private void HandlePopupShowAssignment(AssignmentData assignment) {
         ShowMenuPanel("assignments");
         assignments.ShowAssignmentInfo(assignment.Id);
@@ -1734,3 +1794,15 @@ public partial class UI : CanvasLayer {
         }
     }
 }
+
+// public class TutorialText {
+//     public string Header { get; set; }
+//     public string Description { get; set; }
+//
+//     //parameterless constructor
+//     public TutorialText() { }
+// 	
+//     public TutorialText(string id) {
+//         // Header = header;
+//     }
+// }

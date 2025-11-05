@@ -503,7 +503,6 @@ public partial class ExtractManager : Node {
 		
 		// extractDataList.Add(new ExtractData("ShieldRegen", 1, 0, 0)); //no shield regen
 	}
-    
 }
 
 public class ExtractData {

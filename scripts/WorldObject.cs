@@ -10,6 +10,9 @@ public partial class WorldObject : StaticBody2D {
     [Export] private string name;
     [Export] public string objectId;
     
+    [Export] public Tutorial TutorialType { get; set; }
+    public enum Tutorial { None, Extract, Cracking, Bullet }
+    
     private Texture2D _worldObjectTexture;
     private Sprite2D thisSprite;
     
@@ -70,7 +73,7 @@ public partial class WorldObject : StaticBody2D {
         if (HasNode("Popup")) { //not needed, they all have popup
             infoPopup = GetNode<Label>("Popup");
             infoPopup.SetAsTopLevel(true);
-            HidePopup();
+            HideInfoPopup();
         }
     }
 
@@ -133,7 +136,7 @@ public partial class WorldObject : StaticBody2D {
         interactArea.AddChild(collisionShape);
     }
     
-    private void ShowPopup() {
+    private void ShowInfoPopup() {
         if (hidePopup) { return; }
         if (infoPopup == null) { return; }
 
@@ -172,7 +175,7 @@ public partial class WorldObject : StaticBody2D {
         infoPopup.Visible = true;
     }
     
-    private void HidePopup() {
+    private void HideInfoPopup() {
         if (infoPopup == null) { return; }
         infoPopup.Visible = false;
     }
@@ -264,7 +267,10 @@ public partial class WorldObject : StaticBody2D {
         vars.CurrentWorldObject = this;
         StartCracking();
         // GD.Print($"interacting with {objectId}");
-        ShowPopup();
+        ShowInfoPopup();
+        
+        if (TutorialType != Tutorial.None) { ui.ShowPopupTutorial(TutorialType.ToString()); }
+        
     }
     
     private void PlayerExitedRange(Area2D body) {
@@ -272,7 +278,7 @@ public partial class WorldObject : StaticBody2D {
         vars.CurrentWorldObject = this;
         ResetCracking();
         // vars.IsInteracting = false;
-        HidePopup();
+        HideInfoPopup();
     }
     
     // private void PlayerCollided(Area2D body) { //not used?

@@ -161,6 +161,7 @@ public partial class Player : CharacterBody2D {
                 // Contains() will be true, and this block will be skipped.
                 vars.DiscoveredAreas.Add(areaName);
                 // main.GetTotalDiscoveredAreas();
+                vars.SaveGameData();
                 main.GainCampingLevel();
             }
         } else {

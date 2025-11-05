@@ -510,7 +510,7 @@ public partial class Main : Node2D {
 	}
 	
 	public int GetCrackingExpNext() {
-		return 1 + vars.SkillCrackingLevel;
+		return 2 + vars.SkillCrackingLevel;
 		// if (vars.SkillCrackingLevel >= 100) { return Math.Ceiling(Math.Pow((vars.PlayerLevel + 1), 2.6) * 100); } //100 is soft cap
 		// return Math.Ceiling(Math.Pow((vars.SkillCrackingLevel + 1), 1.6) * 100);
 	}

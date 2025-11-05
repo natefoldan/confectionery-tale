@@ -83,7 +83,9 @@ public partial class SavedResources : Resource {
     //the actual lists that gets saved/loaded.
     [Export] public Array<BaseExtract> inventoryExtracts { get; set; } = new Array<BaseExtract>();
     [Export] public Array<BaseExtract> equippedExtracts { get; set; } = new Array<BaseExtract>();
-
+    [Export] public Array<string> DiscoveredAreasList { get; set; } = new Array<string>();
+    [Export] public Array<string> SeenTutorialsList { get; set; } = new Array<string>();
+    
     public SavedResources() { }
 
     //used by Variables or directly if needed
