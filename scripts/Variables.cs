@@ -18,6 +18,7 @@ public partial class Variables : Node {
 	public Array<SavedAssignmentData> SavedAssignmentDataArray { get; set; }
 	public HashSet<string> DiscoveredAreas { get; set; } = new HashSet<string>();
 	public HashSet<string> SeenTutorials { get; set; } = new HashSet<string>();
+	public HashSet<string> CollectedWorldObjects { get; set; } = new HashSet<string>();
 	//public properties for easy access (will be synced to/from savedResources) ---
 	//convenience getters/setters for simple data. For complex data like lists, access savedResources.droppedItems directly.
 	
@@ -157,7 +158,7 @@ public partial class Variables : Node {
 		MusicOn = false;
 		// MusicOn = true;
 		PlayerLevel = 1;
-		CurrentSucrose = 10000;
+		CurrentSucrose = 0;
 		CurrentPlayerExp = 0;
 		// SkillCrackingLevel = 1;
 		// CurrentWorldObject = ""; //old way
@@ -165,11 +166,11 @@ public partial class Variables : Node {
 		CondenserBuilt = false;
 		RefinerBuilt = false;
 		
-		SoftenerOwned = true;
-		SpreaderOwned = true;
-		SniperOwned = true;
-		SlowerOwned = true;
-		SmasherOwned = true;
+		// SoftenerOwned = false;
+		// SpreaderOwned = true;
+		// SniperOwned = true;
+		// SlowerOwned = true;
+		// SmasherOwned = true;
 		TinctureHealthAmount = 4;
 		TinctureSpeedAmount = 4;
 		TinctureConcealAmount = 4;
@@ -296,10 +297,11 @@ public partial class Variables : Node {
         SavedPortalDataArray = savedResources.SavedPortalDataArray; //MOVE
         SavedAssignmentDataArray = savedResources.SavedAssignmentDataArray; //MOVE
         
-        // SeenTutorials = new HashSet<string>(savedResources.SeenTutorialsList); //DELETE
         
         //load the saved list and convert it back into the 'SeenTutorials' HashSet
         SeenTutorials = savedResources.SeenTutorialsList != null ? [..savedResources.SeenTutorialsList] : [];
+        
+        CollectedWorldObjects = savedResources.CollectedWorldObjectsList != null ? [..savedResources.CollectedWorldObjectsList] : [];
         
         // Convert the saved list back into the fast 'HashSet' for runtime checks.
         if (savedResources.DiscoveredAreasList != null) {
@@ -380,6 +382,7 @@ public partial class Variables : Node {
         // Convert the fast 'HashSet' into a 'Godot.Collections.Array' that can be saved.
         savedResources.DiscoveredAreasList = new Godot.Collections.Array<string>(DiscoveredAreas);
         savedResources.SeenTutorialsList = new Godot.Collections.Array<string>(SeenTutorials);
+        savedResources.CollectedWorldObjectsList = new Godot.Collections.Array<string>(CollectedWorldObjects);
         
         Error saveResult = ResourceSaver.Save(savedResources, FilePath); // Save the SavedResources instance
         if (saveResult == Error.Ok) {

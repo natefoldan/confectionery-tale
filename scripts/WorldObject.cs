@@ -10,6 +10,9 @@ public partial class WorldObject : StaticBody2D {
     [Export] private string name;
     [Export] public string objectId;
     
+    [Export] public Type ObjectType { get; set; }
+    public enum Type { None, Extract, Material, Bullet }
+    
     [Export] public Tutorial TutorialType { get; set; }
     public enum Tutorial { None, Extract, Cracking, Bullet }
     
@@ -140,16 +143,6 @@ public partial class WorldObject : StaticBody2D {
         if (hidePopup) { return; }
         if (infoPopup == null) { return; }
 
-        //GD.Print($"interacting with {objectId} has popup: {!hidePopup}");
-        // switch (objectId) { //not used -delete
-        //     case "woDistillery":
-        //         PopulateDistilleryPopup();
-        //         break;
-        //     case "woSoftener":
-        //         PopulateSoftenerPopup();
-        //         break;
-        // }
-
         PopulatePopupText();
         
         //get the popup size
@@ -214,7 +207,7 @@ public partial class WorldObject : StaticBody2D {
         // GD.Print("crack complete");
         cracked = true;
         main.GainCrackingExp(GetCrackingExp());
-        // SaveWorldObjectData(); //uncomment
+        SaveWorldObjectData(); //uncomment
         QueueFree();
     }
 
@@ -263,7 +256,6 @@ public partial class WorldObject : StaticBody2D {
     }
     
     private void PlayerEnteredRange(Area2D body) {
-        // vars.CurrentWorldObject = objectId; //old way
         vars.CurrentWorldObject = this;
         StartCracking();
         // GD.Print($"interacting with {objectId}");
@@ -274,22 +266,15 @@ public partial class WorldObject : StaticBody2D {
     }
     
     private void PlayerExitedRange(Area2D body) {
-        // vars.CurrentWorldObject = ""; //old way
         vars.CurrentWorldObject = this;
         ResetCracking();
         // vars.IsInteracting = false;
         HideInfoPopup();
     }
     
-    // private void PlayerCollided(Area2D body) { //not used?
-    //     GD.Print("player entered range");
-    // }
-    
     public string GetObjectId() { return objectId; }
-
-    public void Remove() {
-        QueueFree();
-    }
+    
+    public void Remove() { QueueFree(); }
     
     private void SaveWorldObjectData() {
         var savedWorldObjectArray = vars.SavedWorldObjectArray;

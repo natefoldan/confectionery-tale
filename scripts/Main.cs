@@ -180,7 +180,6 @@ public partial class Main : Node2D {
 			    allSpawners.Add(enemySpawnerScript);
 		    } else {
 			    GD.PushWarning($"Node '{spawner.Name}' in group 'worldobject' does not have a 'WorldObject.cs' script attached.");
-			    //todo conflict, spawners and world objects are in same group
 		    }
 	    }
 	    foreach (var es in allSpawners) { es.SetupSpawner(GetPlayerCamera()); }
@@ -210,6 +209,18 @@ public partial class Main : Node2D {
     private void RemoveOwnedWorldObjects() {
 	    //this is a very hmm way of doing this, maybe figure out a better way
 	    // if (vars.SoftenerOwned) { RemoveWorldObject("woSoftener"); }
+	    
+	    foreach (var worldObject in allWorldObjects) {
+		    // if (!wo.GetObjectId().Equals(objectId)) { continue; }
+		    // // GD.Print("removing " + wo.GetInteractId());
+		    // wo.Remove();
+		    // Check if its ID is in our "collected" list
+		    GD.Print("checking " + worldObject.objectId);
+		    if (vars.CollectedWorldObjects.Contains(worldObject.objectId)) {
+			    GD.Print("found owned object");
+			    worldObject.Remove();
+		    }
+	    }
     }
     
     public void RemoveWorldObject(string objectId) {
@@ -233,6 +244,7 @@ public partial class Main : Node2D {
 	}
 	
 	public void GainMaterial(BaseMaterial material, int amount) {
+		GD.Print($"picking up {material.Id}");
 		material.CurrentOwned += amount;
 		material.TotalFound += amount;
 
@@ -631,8 +643,8 @@ public partial class Main : Node2D {
 	
 	//player health
 	public int GetPlayerLevelHealth() { return vars.PlayerLevel * 10; }
-	public int GetPlayerModHealth() { return ui.GetExtractStatValue("Health"); }
-	public int GetPlayerMaxHealth() { return GetPlayerLevelHealth() + GetPlayerModHealth(); }
+	public int GetPlayerExtractHealth() { return ui.GetExtractStatValue("Health"); }
+	public int GetPlayerMaxHealth() { return GetPlayerLevelHealth() + GetPlayerExtractHealth(); }
 
 	//player damage
 	public double GetPlayerLevelDamage() { return Math.Ceiling(Math.Pow(vars.PlayerLevel, 1.35)); }
@@ -717,7 +729,7 @@ public partial class Main : Node2D {
 	
 	public double GetPlayerExtractKnockback() {
 		return 0;
-		// return ui.GetModStatValue("Knockback"); //DOESN'T YET EXIST
+		// return ui.GetExtractStatValue("Knockback"); //DOESN'T YET EXIST
 	}
 	public double GetPlayerEquippedWeaponKnockback() { return currentWeaponData.Knockback; }
 
@@ -783,27 +795,23 @@ public partial class Main : Node2D {
 	//chill
 	
 	//reload
-	
-	
 	public float GetFinalWeaponReload() {
 		var baseReloadTime = GetPlayerEquippedWeaponReload();
     
-		// Get the total time reduction multiplier (e.g., 0.5 for 50% less time)
+		//get the total time reduction multiplier (e.g., 0.5 for 50% less time)
 		var timeMultiplier = 1.0f - GetSkillReloadEffect(currentWeaponData.Id); 
 	
-		// Ensure multiplier is not negative (though it shouldn't be with your setup)
+		//ensure multiplier is not negative
 		if (timeMultiplier < 0) { timeMultiplier = 0; } 
     
-		// --- FIX: Multiply the base time by the time multiplier ---
 		var finalTime = baseReloadTime * timeMultiplier;
     
 		// GD.Print($"Reload Base: {baseReloadTime} | Multiplier: {timeMultiplier} | Final: {finalTime}");
 		return finalTime;
 	}
 	
-	// public double GetPlayerModReload() { return ui.GetModStatValue("ReloadSpeed"); } //not used
+	// public double GetPlayerExtractReload() { return ui.GetExtractStatValue("ReloadSpeed"); } //not used
 	public float GetPlayerEquippedWeaponReload() { return currentWeaponData.ReloadSpeed; }
-
 	
 	public float GetSkillReloadEffect(string bulletType) { //original
 		switch (bulletType) {
@@ -849,14 +857,14 @@ public partial class Main : Node2D {
 	
 	//bullet size
 	public Vector2 GetPlayerFinalBulletSize() {
-		var final = GetPlayerEquippedWeaponBulletSize() * GetPlayerModBulletSize() * GetSkillBulletSize(currentWeaponData.Id);
+		var final = GetPlayerEquippedWeaponBulletSize() * GetPlayerExtractBulletSize() * GetSkillBulletSize(currentWeaponData.Id);
 		// final *= (int) skillMultiplier;
 		return new Vector2(final, final);
 	}
 
-	public int GetPlayerModBulletSize() {
+	public int GetPlayerExtractBulletSize() {
 		return 1; //multiplier
-		// return ui.GetModStatValue("BulletSize"); //DOESN'T YET EXIST
+		// return ui.GetExtractStatValue("BulletSize"); //DOESN'T YET EXIST
 	}
 	public int GetPlayerEquippedWeaponBulletSize() { return currentWeaponData.Size; }
 
@@ -909,19 +917,19 @@ public partial class Main : Node2D {
 	
 	//player speed
 	public int GetPlayerLevelSpeed() { return 1200 + (vars.PlayerLevel * 5); }
-	public int GetPlayerModSpeed() { return ui.GetExtractStatValue("Speed"); }
-	// public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerModSpeed() + GetTinctureSpeed(); }
-	public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
+	public int GetPlayerExtractSpeed() { return ui.GetExtractStatValue("Speed") * 100; }
+	public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerExtractSpeed() + GetTinctureSpeed(); }
+	// public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
 	
 	//player shield
 	public int GetPlayerLevelShield() { return vars.PlayerLevel + 5; }
-	public int GetPlayerModShield() { return ui.GetExtractStatValue("Shield"); }
-	public int GetPlayerFinalShield() { return GetPlayerLevelShield() + GetPlayerModShield(); }
+	public int GetPlayerExtractShield() { return ui.GetExtractStatValue("Shield"); }
+	public int GetPlayerFinalShield() { return GetPlayerLevelShield() + GetPlayerExtractShield(); }
 	
 	//player shield regen
 	public int GetPlayerLevelShieldRegen() { return 1; }
-	public int GetPlayerModShieldRegen() { return ui.GetExtractStatValue("Shield Regen"); }
-	public int GetPlayerFinalShieldRegen() { return GetPlayerLevelShieldRegen() + GetPlayerModShieldRegen(); }
+	public int GetPlayerExtractShieldRegen() { return ui.GetExtractStatValue("Shield Regen"); }
+	public int GetPlayerFinalShieldRegen() { return GetPlayerLevelShieldRegen() + GetPlayerExtractShieldRegen(); }
 	
 	public float GetFinalWeaponSpeed() { return currentWeaponData.Speed; }
 	public int GetFinalWeaponRange() { return currentWeaponData.Range; }
@@ -940,19 +948,18 @@ public partial class Main : Node2D {
 	
 	//sucrose drop
 	public int GetPlayerLevelSucroseDrop() { return 0; }
-	public int GetPlayerModSucroseDrop() { return ui.GetExtractStatValue("Sucrose Drop"); }
-	// public int GetPlayerFinalSucroseDrop() { return GetPlayerLevelSucroseDrop() + GetPlayerModSucroseDrop(); } //prev
-	public int GetPlayerFinalSucroseDrop() { return 100 + GetPlayerModSucroseDrop(); }
+	public int GetPlayerExtractSucroseDrop() { return ui.GetExtractStatValue("Sucrose Drop"); }
+	public int GetPlayerFinalSucroseDrop() { return 100 + GetPlayerExtractSucroseDrop(); }
 	
 	//exp drop
 	public int GetPlayerLevelExpDrop() { return 0; }
-	public int GetPlayerModExpDrop() { return ui.GetExtractStatValue("Exp Drop"); }
-	public int GetPlayerFinalExpDrop() { return 100 + GetPlayerModExpDrop(); }
+	public int GetPlayerExtractExpDrop() { return ui.GetExtractStatValue("Exp Drop"); }
+	public int GetPlayerFinalExpDrop() { return 100 + GetPlayerExtractExpDrop(); }
 	
 	//player pickup range
 	public int GetPlayerLevelPickupRange() { return (vars.PlayerLevel * 5) + 500; }
-	public int GetPlayerModPickupRange() { return ui.GetExtractStatValue("Pickup Range"); }
-	public int GetPlayerFinalPickupRange() { return (GetPlayerLevelPickupRange() + GetPlayerModPickupRange()); }
+	public int GetPlayerExtractPickupRange() { return ui.GetExtractStatValue("Pickup Range"); }
+	public int GetPlayerFinalPickupRange() { return (GetPlayerLevelPickupRange() + GetPlayerExtractPickupRange()); }
 
 	public void SetCurrentWeaponData(int data) {
 		currentWeaponData = weaponDataList[data];
@@ -991,7 +998,6 @@ public partial class Main : Node2D {
 	public Node2D GetWorld() { return GetNode<Node2D>("World"); }
 	
 	public WeaponData GetCurrentWeaponData() { return currentWeaponData; }
-
 	public List<WeaponData> GetAllWeaponData() { return weaponDataList; }
 	
 	private void BuildWeaponData() {
@@ -1031,7 +1037,7 @@ public partial class Main : Node2D {
 
 	//dev
 	private void gainsucrose() {
-		ChangeSucrose(1000000);
+		ChangeSucrose(600);
 		// ChangeSucrose(50000);
 	}
 	

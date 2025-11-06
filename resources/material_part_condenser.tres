@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BaseMaterial" load_steps=3 format=3 uid="uid://d3r2ckovara2b"]
+
+[ext_resource type="Script" uid="uid://lkxh633fdqwo" path="res://scripts/BaseMaterial.cs" id="1_1ff60"]
+[ext_resource type="Texture2D" uid="uid://dh8038xmvwvqi" path="res://assets/sprites/material-condenser.png" id="1_q3pnu"]
+
+[resource]
+script = ExtResource("1_1ff60")
+DisplayTexture = ExtResource("1_q3pnu")
+Id = "woPartCondenser"
+Description = "Condenser Part"
+metadata/_custom_type_script = "uid://lkxh633fdqwo"

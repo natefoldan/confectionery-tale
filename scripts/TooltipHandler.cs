@@ -39,6 +39,7 @@ public partial class TooltipHandler : Node {
     
     private Color colorYellow = new Color(.984f, .847f, .208f);
     private Color colorWhite = new Color(1f, 1f, 1f);
+    private Color colorRed = new Color(.99f, 0f, 0f);
     // private Color colorGreen = new Color(.106f, .369f, .125f); //prev
     // private Color colorBlue = new Color(.051f, .278f, .631f); //prev
     // private Color colorPurple = new Color(.385f, .057f, .66f); //prev
@@ -194,36 +195,36 @@ public partial class TooltipHandler : Node {
                     (float) Math.Ceiling(main.GetPlayerExtractDamage()),
                     (float) Math.Ceiling(baseWeaponDamage * skillMultiplier))];
             case "Health":
-                return [(main.GetPlayerLevelHealth(), main.GetPlayerModHealth(), 0)];
+                return [(main.GetPlayerLevelHealth(), main.GetPlayerExtractHealth(), 0)];
             case "Pierce":
                 return [(0, main.GetPlayerExtractPierce(), main.GetPlayerEquippedWeaponPierce())];
             case "Range":
-                return [(main.GetPlayerLevelPickupRange(), main.GetPlayerModPickupRange(), 0)];
+                return [(main.GetPlayerLevelPickupRange(), main.GetPlayerExtractPickupRange(), 0)];
             case "CritChance":
                 return [(0, main.GetPlayerExtractCritChance(), main.GetPlayerEquippedWeaponCritChance())];
             case "CritDamage":
                 return [(0, main.GetPlayerExtractCritDamage(), main.GetPlayerEquippedWeaponCritDamage())];
             case "Speed":
-                return [(main.GetPlayerLevelSpeed() / 100, main.GetPlayerModSpeed() / 100, 0)];
+                return [(main.GetPlayerLevelSpeed() / 100, main.GetPlayerExtractSpeed() / 100, 0)];
             case "Shield":
-                return [(main.GetPlayerLevelShield(), main.GetPlayerModShield(), 0)];
+                return [(main.GetPlayerLevelShield(), main.GetPlayerExtractShield(), 0)];
             case "ShieldRegen":
-                return [(main.GetPlayerLevelShieldRegen(), main.GetPlayerModShieldRegen(), 0)];
+                return [(main.GetPlayerLevelShieldRegen(), main.GetPlayerExtractShieldRegen(), 0)];
             case "ExtractDrop":
                 // return [(main.GetPlayerLevelModDropChance() * .1, main.GetPlayerModModDropChance() * .1, 0)]; //prev -delete
                 return [(main.GetPlayerLevelExtractDropChance(), main.GetEquippedExtractsDropChance(), 0)];
             case "SucroseDrop":
-                return [(main.GetPlayerLevelSucroseDrop(), main.GetPlayerModSucroseDrop(), 0)];
+                return [(main.GetPlayerLevelSucroseDrop(), main.GetPlayerExtractSucroseDrop(), 0)];
             case "ExpDrop":
-                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerModExpDrop(), 0)];
+                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerExtractExpDrop(), 0)];
             case "Slow":
-                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerModExpDrop(), 0)];
+                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerExtractExpDrop(), 0)];
             case "Melt":
-                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerModExpDrop(), 0)];
+                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerExtractExpDrop(), 0)];
             case "SlowResist":
-                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerModExpDrop(), 0)];
+                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerExtractExpDrop(), 0)];
             case "MeltResist":
-                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerModExpDrop(), 0)];
+                return [(main.GetPlayerLevelExpDrop(), main.GetPlayerExtractExpDrop(), 0)];
         }
         return new List<(float levelStat, float extractStat, float weaponStat)>();
     }
@@ -277,6 +278,7 @@ public partial class TooltipHandler : Node {
         switch (color) {
             case "black": return colorBlack;
             case "white": return colorWhite;
+            case "red": return colorRed;
             case "green": return colorGreen;
             case "blue": return colorBlue;
             case "purple": return colorPurple;

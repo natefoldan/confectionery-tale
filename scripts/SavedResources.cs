@@ -85,6 +85,7 @@ public partial class SavedResources : Resource {
     [Export] public Array<BaseExtract> equippedExtracts { get; set; } = new Array<BaseExtract>();
     [Export] public Array<string> DiscoveredAreasList { get; set; } = new Array<string>();
     [Export] public Array<string> SeenTutorialsList { get; set; } = new Array<string>();
+    [Export] public Array<string> CollectedWorldObjectsList { get; set; } = new Array<string>();
     
     public SavedResources() { }
 

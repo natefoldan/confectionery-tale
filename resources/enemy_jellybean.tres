@@ -13,5 +13,5 @@ DropType = 1
 Rank = 1
 CollideDamage = 4
 animation = "jellybean"
-ItemDrops = Array[Resource]([ExtResource("4_2lcpu")])
+ItemDrops = Array[Resource]([ExtResource("4_2lcpu"), null])
 metadata/_custom_type_script = "uid://7x1hvvmr863i"

@@ -35,13 +35,6 @@ public partial class ItemSlot : TextureRect {
         full = true;
     }
     
-    // public void Reset() { //original -works
-    //     GetNode<TextureButton>("Item").TextureNormal = null;
-    //     extract = null;
-    //     material = null;
-    //     full = false;
-    // }
-
     public void Reset() {
         extract = null;
         material = null;

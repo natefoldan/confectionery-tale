@@ -242,6 +242,8 @@ public partial class Enemy : CharacterBody2D {
         var chance = GetEnemyRank();
         if (chance > 40) { chance = 40; }
 
+        chance = 100; //fore testing -delete
+        
         //check essence drop
         if (thisEnemy.ItemDrops != null && thisEnemy.ItemDrops.Length > 0) {
             var itemDropRoll = GD.RandRange(1, 100);

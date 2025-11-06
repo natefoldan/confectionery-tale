@@ -77,7 +77,6 @@ public partial class Player : CharacterBody2D {
         RechargeShield(delta);
         RegenHealth(delta);
         CollectDrops();
-
         
         Vector2I newTileCoord = tileMapWorld.LocalToMap(GlobalPosition);
 
@@ -532,34 +531,54 @@ public partial class Player : CharacterBody2D {
         }
         
         if (Input.IsActionJustPressed("interact_with")) {
-            
             if (vars.CurrentWorldObject == null) { return; }
-            // 2. Get the ID from the object instance
-            string objectId = vars.CurrentWorldObject.objectId;
             
-            // switch (vars.CurrentWorldObject) { //old way
+            string objectId = vars.CurrentWorldObject.objectId; //get the ID from the object instance
+
+            //permanent objects
             switch (objectId) {
                 case "woDistillery":
                     ui.ToggleDistillery();
-                    // if (vars.DistilleryBuilt) { ToggleDistillery(); } //if not enabling interaction before built -not used
-                    // else { BuildDistillery(); }
-                    break;
-                
-                case "woSoftener":
-                    main.RemoveWorldObject("woSoftener");
-                    ui.GainNewBullet(1);
-                    break;
-                
+                    GetTree().GetRoot().SetInputAsHandled();
+                    return;
                 case "playerPortalTrain":
                     main.TeleportPlayer("startingSpot");
+                    GetTree().GetRoot().SetInputAsHandled();
+                    return;
+            }
+            
+            //one time collectables
+            var objectType = main.GetWorldObjectById(objectId).ObjectType;
+            var collectedItem = false;
+            
+            switch (objectType) {
+                case WorldObject.Type.Material:
+                    main.GainMaterial(ui.GetMaterialById(objectId), 1);
+                    main.RemoveWorldObject(objectId);
+                    collectedItem = true;
                     break;
-                
-                case "worldExtract":
+                case WorldObject.Type.Extract:
                     vars.CurrentWorldObject.PickupFixedExtract();
                     vars.CurrentWorldObject = null;
+                    collectedItem = true;
+                    break;
+                case WorldObject.Type.Bullet:
+                    var weaponData = main.GetAllWeaponData();
+                    foreach (var data in weaponData) {
+                        if(!data.Id.Equals(objectId)) { continue; }
+                        main.RemoveWorldObject(data.Id);
+                        ui.GainNewBullet(data.FireMode);
+                        collectedItem = true;
+                    }
                     break;
             }
-            GetTree().GetRoot().SetInputAsHandled();
+            
+            if (collectedItem) {
+                vars.CollectedWorldObjects.Add(objectId);
+                vars.SaveGameData();
+                vars.CurrentWorldObject = null;
+                GetTree().GetRoot().SetInputAsHandled();
+            }
         }
     }
     

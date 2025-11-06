@@ -322,6 +322,11 @@ public partial class UI : CanvasLayer {
         BuildMaterialsSlots();
         BuildAllWeaponStatTooltipsList();
         SetupMenus();
+        
+        //for testing -delete
+        // foreach (var material in allMaterials) { 
+        //     GD.Print($"{material.Name}: {material.CurrentOwned}");
+        // }
     }
 
     private void SetupHudButtons() {
@@ -742,7 +747,7 @@ public partial class UI : CanvasLayer {
     
     public void UpdatePlayerSheet() {
         if (!mainMenu.Visible) { return; }
-        var colorGreen = tooltips.GetStringColor("teal");
+        var colorGreen = tooltips.GetStringColor("teal"); //rename color green
         playerLevelLabel.Text = "KANE - LEVEL " + vars.PlayerLevel;
         statLabelDamage.Text = $"Damage: {colorGreen}{main.GetPlayerFinalDamage()}";
         statLabelPierce.Text = $"Pierce: {colorGreen}{main.GetPlayerFinalPierce()}";
@@ -752,7 +757,8 @@ public partial class UI : CanvasLayer {
         statLabelShieldRegen.Text = $"Shield Regen: {colorGreen}{main.GetPlayerFinalShieldRegen()}/s";
         statLabelHealth.Text = $"Max Health: {colorGreen}{main.GetPlayerMaxHealth()}";
         statLabelRange.Text = $"Pickup Range: {colorGreen}{main.GetPlayerFinalPickupRange()}";
-        statLabelSpeed.Text = $"Move Speed: {colorGreen}{(main.GetPlayerFinalSpeed() / 100)} m/s";
+        statLabelSpeed.Text = $"Move Speed: {colorGreen}{(main.GetPlayerFinalSpeed() / 100)}"; // m/s
+        // statLabelSpeed.Text = $"Move Speed: {colorGreen}{(main.GetPlayerFinalSpeed())}"; // m/s
         statLabelExtractDrop.Text = $"Extract Drop: {colorGreen}{main.GetPlayerFinalExtractDropChanceDisplay().ToString("F1")}%";
         statLabelSucroseDrop.Text = $"Sucrose Drop: {colorGreen}{main.GetPlayerFinalSucroseDrop()}%";
         statLabelExpDrop.Text = $"Exp Gain: {colorGreen}{main.GetPlayerFinalExpDrop()}%";
@@ -1299,7 +1305,7 @@ public partial class UI : CanvasLayer {
     
     private void HandleItemSlotClicked(ItemSlot slot, BaseExtract extract, BaseMaterial material) {
         if (material != null) { //for testing -delete
-            main.LoseMaterial(material, 1);
+            // main.LoseMaterial(material, 1);
             return;
         }
         
@@ -1451,41 +1457,24 @@ public partial class UI : CanvasLayer {
              ProcessMaterialForDisplay(material);
         }
     }
+
+    public BaseMaterial GetMaterialById(string materialId) {
+        foreach (var material in allMaterials) { 
+            if (!materialId.Equals(material.Id)) { continue; }
+            return material;
+        }
+        return null;
+    }
     
-    // public bool UpdateMaterialInventoryItem(BaseMaterial material) { //previous -works
-    //     if (material.InInventory) {
-    //         UpdateMaterialItemCount(material);
-    //         return true;
-    //     }
-    //
-    //     foreach (var slot in allMaterialsSlots) {
-    //         if (slot.GetFull()) { continue; }
-    //         material.InInventory = true;
-    //         slot.AddNewMaterial(material);
-    //         slot.DisplayMaterial(material);
-    //         return true;
-    //     }
-    //     return true;
-    // }
-    //
-    // private void UpdateMaterialItemCount(BaseMaterial material) { //previous -works
-    //     foreach (var slot in allMaterialsSlots) {
-    //         if (!slot.GetFull()) { continue; }
-    //         var slotItem = slot.GetInventoryMaterial();
-    //         if (material.Id.Equals(slotItem.Id)) {
-    //             if (material.CurrentOwned > 0) {
-    //                 slot.DisplayMaterial(material);
-    //                 return;
-    //             }
-    //             material.InInventory = false;
-    //             slot.Reset();
-    //         }
-    //     }
-    // }
-    //
-    // public void RefreshMaterialsDisplay() { //previous -works
-    //     foreach (var material in allMaterials) { UpdateMaterialInventoryItem(material); }
-    // }
+    public double GetOwnedMaterialAmount(string materialId) {
+        double amount = 0;
+        foreach (var material in allMaterials) { 
+            // GD.Print($"{material.Name}: {material.CurrentOwned}");
+            if (!materialId.Equals(material.Id)) { continue; }
+            amount = material.CurrentOwned;
+        }
+        return amount;
+    }
     
     private void UpdateSavedItemData() {
         savedItemDataArray.Clear();
