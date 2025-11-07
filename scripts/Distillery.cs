@@ -435,7 +435,6 @@ public partial class Distillery : Control {
 		if (sucroseMet && essenceMet && partMet) {
 			condenserBuildButton.Disabled = false;
 		}
-		
 		UpdateCondenserBuildDisplay();
 	}
 
@@ -448,8 +447,8 @@ public partial class Distillery : Control {
 			CheckCondenserSucroseRequirementMet() ? tooltips.GetDecimalColor("green") : tooltips.GetDecimalColor("red"));
 		
 		var essenceCostLabel = GetNode<Label>("Condenser/Build/MaterialTwo/Label");
-		essenceCostLabel.Text = $"Chewy Essence\n" +
-		                        $"{ui.GetOwnedMaterialAmount("essenceChewy")}/{GetCondenserBuildEssenceCost()}";
+		essenceCostLabel.Text = $"Hard Essence\n" +
+		                        $"{ui.GetOwnedMaterialAmount("essenceHard")}/{GetCondenserBuildEssenceCost()}";
 		essenceCostLabel.Set("theme_override_colors/font_color",
 			CheckCondenserEssenceRequirementMet() ? tooltips.GetDecimalColor("green") : tooltips.GetDecimalColor("red"));
 		
@@ -462,20 +461,22 @@ public partial class Distillery : Control {
 	
 	private void BuildCondenser() {
 		main.ChangeSucrose(-GetCondenserBuildSucroseCost());
-		main.LoseMaterial(ui.GetMaterialById("essenceChewy"), GetCondenserBuildEssenceCost());
+		main.LoseMaterial(ui.GetMaterialById("essenceHard"), GetCondenserBuildEssenceCost());
 		main.LoseMaterial(ui.GetMaterialById("partCondenser"), GetCondenserBuildPartCost());
 		vars.CondenserBuilt = true;
 		ShowCondenser();
 	}
 	
 	private bool CheckCondenserSucroseRequirementMet() { return vars.CurrentSucrose >= GetCondenserBuildSucroseCost(); }
-	private bool CheckCondenserEssenceRequirementMet() { return ui.GetOwnedMaterialAmount("essenceChewy") >= GetCondenserBuildEssenceCost(); }
+	private bool CheckCondenserEssenceRequirementMet() { return ui.GetOwnedMaterialAmount("essenceHard") >= GetCondenserBuildEssenceCost(); }
 	private bool CheckCondenserPartRequirementMet() { return ui.GetOwnedMaterialAmount("partCondenser") >= GetCondenserBuildPartCost(); }
 	
-	private int GetCondenserBuildSucroseCost() { return 1000; }
-	private int GetCondenserBuildEssenceCost() { return 2; }
+	private int GetCondenserBuildSucroseCost() { return 10000; }
+	private int GetCondenserBuildEssenceCost() { return 10; }
 	private int GetCondenserBuildPartCost() { return 1; }
 	
+	
+	//refiner
 	private void ShowRefiner() {
 		refinerBuildScreen.Visible = false;
 		refinerPanel.Visible = true;
@@ -504,39 +505,45 @@ public partial class Distillery : Control {
 		if (sucroseMet && essenceMet && partMet) {
 			refinerBuildButton.Disabled = false;
 		}
+		UpdateRefinerBuildDisplay();
 	}
 
+	private void UpdateRefinerBuildDisplay() {
+		var sucroseCostLabel = GetNode<Label>("Refiner/Build/MaterialOne/Label");
+		sucroseCostLabel.Text = $"Sucrose\n" +
+		                        $"{vars.CurrentSucrose}/{GetRefinerBuildSucroseCost()}";
+		
+		sucroseCostLabel.Set("theme_override_colors/font_color",
+			CheckRefinerSucroseRequirementMet() ? tooltips.GetDecimalColor("green") : tooltips.GetDecimalColor("red"));
+		
+		var essenceCostLabel = GetNode<Label>("Refiner/Build/MaterialTwo/Label");
+		essenceCostLabel.Text = $"Chewy Essence\n" +
+		                        $"{ui.GetOwnedMaterialAmount("essenceChewy")}/{GetRefinerBuildEssenceCost()}";
+		essenceCostLabel.Set("theme_override_colors/font_color",
+			CheckRefinerEssenceRequirementMet() ? tooltips.GetDecimalColor("green") : tooltips.GetDecimalColor("red"));
+		
+		var partCostLabel = GetNode<Label>("Refiner/Build/MaterialThree/Label");
+		partCostLabel.Text = $"Refiner Part\n" +
+		                     $"{ui.GetOwnedMaterialAmount("partCondenser")}/{GetRefinerBuildPartCost()}";
+		partCostLabel.Set("theme_override_colors/font_color",
+			CheckRefinerPartRequirementMet() ? tooltips.GetDecimalColor("green") : tooltips.GetDecimalColor("red"));
+	}
+	
 	private void BuildRefiner() {
 		main.ChangeSucrose(-GetRefinerBuildSucroseCost());
-		//GetRefinerBuildEssenceCost()
-		//GetRefinerBuildPartCost()
+		main.LoseMaterial(ui.GetMaterialById("essenceChewy"), GetRefinerBuildEssenceCost());
+		main.LoseMaterial(ui.GetMaterialById("partCondenser"), GetRefinerBuildPartCost());
 		vars.RefinerBuilt = true;
 		ShowRefiner();
 	}
 	
-	private bool CheckRefinerSucroseRequirementMet() {
-		return vars.CurrentSucrose >= GetRefinerBuildSucroseCost();
-	}
+	private bool CheckRefinerSucroseRequirementMet() { return vars.CurrentSucrose >= GetRefinerBuildSucroseCost(); }
+	private bool CheckRefinerEssenceRequirementMet() { return ui.GetOwnedMaterialAmount("essenceChewy") >= GetRefinerBuildEssenceCost(); }
+	private bool CheckRefinerPartRequirementMet() { return ui.GetOwnedMaterialAmount("partCondenser") >= GetRefinerBuildPartCost(); }
 	
-	private bool CheckRefinerEssenceRequirementMet() {
-		return vars.CurrentSucrose >= GetRefinerBuildEssenceCost();
-	}
-	
-	private bool CheckRefinerPartRequirementMet() {
-		return vars.CurrentSucrose >= GetRefinerBuildPartCost();
-	}
-	
-	private int GetRefinerBuildSucroseCost() {
-		return 1;
-	}
-	
-	private int GetRefinerBuildEssenceCost() {
-		return 10;
-	}
-	
-	private int GetRefinerBuildPartCost() {
-		return 1;
-	}
+	private int GetRefinerBuildSucroseCost() { return 1000; }
+	private int GetRefinerBuildEssenceCost() { return 5; }
+	private int GetRefinerBuildPartCost() { return 1; }
 	
 	private void SwapRefinerCondenser() {
 		if (refinerPanel.Visible) { ShowCondenser(); }

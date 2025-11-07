@@ -322,7 +322,6 @@ public partial class UI : CanvasLayer {
         BuildMaterialsSlots();
         BuildAllWeaponStatTooltipsList();
         SetupMenus();
-        
         //for testing -delete
         // foreach (var material in allMaterials) { 
         //     GD.Print($"{material.Name}: {material.CurrentOwned}");
@@ -945,28 +944,28 @@ public partial class UI : CanvasLayer {
         }
     }
     
-    public int GetExtractStatValue(string stat) {
-        var value = 0;
-        foreach (var extract in allEquippedExtractSlots) {
-            if (!extract.GetFull()) { continue; }
-
-            switch (stat) {
-                case "Damage": value += extract.GetExtract().ExtractBaseDamage; break;
-                case "Pierce": value += extract.GetExtract().ExtractBasePierce; break;
-                case "Crit Chance": value += extract.GetExtract().ExtractBaseCritChance; break;
-                case "Crit Damage": value += extract.GetExtract().ExtractBaseCritDamage; break;
-                case "Shield": value += extract.GetExtract().ExtractBaseShield; break;
-                case "Shield Regen": value += extract.GetExtract().ExtractBaseShieldRegen; break;
-                case "Health": value += extract.GetExtract().ExtractBaseHealth; break;
-                case "Pickup Range": value += extract.GetExtract().ExtractBasePickupRange; break;
-                case "Speed": value += extract.GetExtract().ExtractBaseSpeed; break;
-                case "Extract Drop": value += extract.GetExtract().ExtractBaseExtractDrop; break;
-                case "Sucrose Drop": value += extract.GetExtract().ExtractBaseSucroseDrop; break;
-                case "Exp Drop": value += extract.GetExtract().ExtractBaseExpGain; break;
-            }
-        }
-        return value;
-    }
+    // public int GetExtractStatValue(string stat) { //moved to main -delete
+    //     var value = 0;
+    //     foreach (var extract in allEquippedExtractSlots) {
+    //         if (!extract.GetFull()) { continue; }
+    //
+    //         switch (stat) {
+    //             case "Damage": value += extract.GetExtract().ExtractBaseDamage; break;
+    //             case "Pierce": value += extract.GetExtract().ExtractBasePierce; break;
+    //             case "Crit Chance": value += extract.GetExtract().ExtractBaseCritChance; break;
+    //             case "Crit Damage": value += extract.GetExtract().ExtractBaseCritDamage; break;
+    //             case "Shield": value += extract.GetExtract().ExtractBaseShield; break;
+    //             case "Shield Regen": value += extract.GetExtract().ExtractBaseShieldRegen; break;
+    //             case "Health": value += extract.GetExtract().ExtractBaseHealth; break;
+    //             case "Pickup Range": value += extract.GetExtract().ExtractBasePickupRange; break;
+    //             case "Speed": value += extract.GetExtract().ExtractBaseSpeed; break;
+    //             case "Extract Drop": value += extract.GetExtract().ExtractBaseExtractDrop; break;
+    //             case "Sucrose Drop": value += extract.GetExtract().ExtractBaseSucroseDrop; break;
+    //             case "Exp Drop": value += extract.GetExtract().ExtractBaseExpGain; break;
+    //         }
+    //     }
+    //     return value;
+    // }
     
     private int GetUnlockedExtractSlots() {
         var slots = (int)Math.Ceiling((double)vars.PlayerLevel / 5);
@@ -1555,26 +1554,6 @@ public partial class UI : CanvasLayer {
             ToggleWorldMap();
             GetTree().GetRoot().SetInputAsHandled();
         }
-        
-        // if (Input.IsActionJustPressed("interact_with")) { //MOVED TO PLAYER
-        //     switch (vars.CurrentWorldObject) {
-        //         case "woDistillery":
-        //             ToggleDistillery();
-        //             // if (vars.DistilleryBuilt) { ToggleDistillery(); } //if not enabling interaction before built -not used
-        //             // else { BuildDistillery(); }
-        //             break;
-        //         
-        //         case "woSoftener":
-        //             main.RemoveWorldObject("woSoftener");
-        //             GainNewBullet(1);
-        //             break;
-        //         
-        //         case "playerPortalTrain":
-        //             main.TeleportPlayer("startingSpot");
-        //             break;
-        //     }
-        //     GetTree().GetRoot().SetInputAsHandled();
-        // }
     }
 
     public void GainNewBullet(int type) {

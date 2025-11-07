@@ -34,8 +34,8 @@ public partial class Main : Node2D {
 	private List<Shelter> allShelters;
 	private List<WorldObject> allWorldObjects;
 	private List<Node2D> placementCollisions = new List<Node2D>();
-	private readonly Color placementValidColor = new Color(0.5f, 1f, 0.5f, 0.7f); // Green tint
-	private readonly Color placementInvalidColor = new Color(1f, 0.5f, 0.5f, 0.7f); // Red tint
+	private readonly Color placementValidColor = new Color(0.5f, 1f, 0.5f, 0.7f); //green tint
+	private readonly Color placementInvalidColor = new Color(1f, 0.5f, 0.5f, 0.7f); //red tint
 	private bool isPlacementValid => placementCollisions.Count == 0;
 	
 	private TileMapLayer tileMapWorld;
@@ -215,9 +215,9 @@ public partial class Main : Node2D {
 		    // // GD.Print("removing " + wo.GetInteractId());
 		    // wo.Remove();
 		    // Check if its ID is in our "collected" list
-		    GD.Print("checking " + worldObject.objectId);
+		    // GD.Print("checking " + worldObject.objectId);
 		    if (vars.CollectedWorldObjects.Contains(worldObject.objectId)) {
-			    GD.Print("found owned object");
+			    // GD.Print("found owned object");
 			    worldObject.Remove();
 		    }
 	    }
@@ -231,13 +231,68 @@ public partial class Main : Node2D {
 	    }
     }
 
-	public void SpawnCurrencySucrose(Vector2 pos, double value) {
-		var currencySucrose = currencySucroseScene.Instantiate<CurrencySucrose>();
-		value *= Math.Round((GetPlayerFinalSucroseDrop() * .01));
-		currencySucrose.SetPos(pos);
-		currencySucrose.SetValue(value);
-		CallDeferred("add_child", currencySucrose);
-	}
+    [Export] private Texture2D sucroseTextureOne; //MOVE THESE
+    [Export] private Texture2D sucroseTextureTen;
+    [Export] private Texture2D sucroseTextureHundred;
+    
+    public void SpawnCurrencySucrose(Vector2 pos, double value) {
+	    // 1. Calculate the final *total* value first.
+	    // (Your original calculation had a logic issue: Math.Round(GetPlayerFinalSucroseDrop() * .01)
+	    // If GetPlayerFinalSucroseDrop() is 150 (for 150%), this would be value * 2.
+	    // A better way is (GetPlayerFinalSucroseDrop() / 100.0)
+    
+	    // Let's assume GetPlayerFinalSucroseDrop() returns 150 for +150%
+	    double finalDropValue = value * (GetPlayerFinalSucroseDrop() / 100.0);
+	    int totalSucroseToSpawn = (int)Math.Ceiling(finalDropValue); // Round up
+
+	    int goldValue = 100;
+	    int purpleValue = 10;
+	    int pinkValue = 1; //this must be the last one
+
+	    //use division and modulo to find out how many of each to spawn
+	    int numGold = totalSucroseToSpawn / goldValue;       // Example: 152 / 100 = 1
+	    int remainder = totalSucroseToSpawn % goldValue;     // Example: 152 % 100 = 52
+
+	    int numPurples = remainder / purpleValue;            // Example: 52 / 10 = 5
+	    int numPinks = remainder % purpleValue;              // Example: 52 % 10 = 2
+
+	    for (int i = 0; i < numGold; i++) { SpawnSingleSucroseCoin(pos, goldValue); }
+	    for (int i = 0; i < numPurples; i++) { SpawnSingleSucroseCoin(pos, purpleValue); }
+	    for (int i = 0; i < numPinks; i++) { SpawnSingleSucroseCoin(pos, pinkValue); }
+    }
+    
+    //helper to spawn one sucrose currency
+    private void SpawnSingleSucroseCoin(Vector2 pos, int value) {
+	    var currencySucrose = currencySucroseScene.Instantiate<CurrencySucrose>();
+
+	    //small random offset so they don't all stack perfectly
+	    Vector2 spawnPos = pos + new Vector2(GD.RandRange(-128, 128), GD.RandRange(-128, 128));
+    
+	    currencySucrose.SetPos(spawnPos);
+	    currencySucrose.SetValue(value); 
+
+	    Texture2D textureToPass;
+	    if (value >= 100) { textureToPass = sucroseTextureHundred; }
+	    else if (value >= 10) { textureToPass = sucroseTextureTen; }
+	    else { textureToPass = sucroseTextureOne; }
+	    currencySucrose.SetTexture(textureToPass);
+	    CallDeferred("add_child", currencySucrose);
+    }
+
+    private void testspawnsucrose() {
+	    var playerPosX = GetPlayerPosition().X;
+	    var playerPosY = GetPlayerPosition().Y;
+	    var spawnLoc = new Vector2(playerPosX + 1500, playerPosY);
+	    SpawnCurrencySucrose(spawnLoc, 138);
+    }
+    
+	// public void SpawnCurrencySucrose(Vector2 pos, double value) { //original -delete
+	// 	var currencySucrose = currencySucroseScene.Instantiate<CurrencySucrose>();
+	// 	value *= Math.Round((GetPlayerFinalSucroseDrop() * .01));
+	// 	currencySucrose.SetPos(pos);
+	// 	currencySucrose.SetValue(value);
+	// 	CallDeferred("add_child", currencySucrose);
+	// }
 	
 	public void GainAssignment(string assignment) {
 		assignments.GainAssignment(assignment);
@@ -265,7 +320,18 @@ public partial class Main : Node2D {
 	public void EquipWeapon(int what) {
 		if (what.Equals(vars.CurrentFireMode)) { return; }
 		//foreach (var b in GetTree().GetNodesInGroup("bullets")) { b.QueueFree(); } //clear current bullets when swapping
-		//main.SetCurrentWeaponData(vars.CurrentFireMode); //hm
+
+		var owned = false;
+		switch (what) { //wonky way to do this
+			case 0: owned = true; break;
+			case 1: owned = vars.SoftenerOwned; break;
+			case 2: owned = vars.SpreaderOwned; break;
+			case 3: owned = vars.SniperOwned; break;
+			case 4: owned = vars.SlowerOwned; break;
+			case 5: owned = vars.SmasherOwned; break;
+		}
+		if (!owned) { return; }
+		
 		SetCurrentWeaponData(what);
 		ui.SetEquippedWeaponPanel();
 		ui.UpdatePlayerSheet();
@@ -643,13 +709,13 @@ public partial class Main : Node2D {
 	
 	//player health
 	public int GetPlayerLevelHealth() { return vars.PlayerLevel * 10; }
-	public int GetPlayerExtractHealth() { return ui.GetExtractStatValue("Health"); }
+	public int GetPlayerExtractHealth() { return GetEquippedExtractStatValue("Health"); }
 	public int GetPlayerMaxHealth() { return GetPlayerLevelHealth() + GetPlayerExtractHealth(); }
 
 	//player damage
 	public double GetPlayerLevelDamage() { return Math.Ceiling(Math.Pow(vars.PlayerLevel, 1.35)); }
 	// public double GetPlayerLevelDamage() { return 0; } //for testing -delete
-	public double GetPlayerExtractDamage() { return ui.GetExtractStatValue("Damage"); }
+	public double GetPlayerExtractDamage() { return GetEquippedExtractStatValue("Damage"); }
 	public double GetPlayerEquippedWeaponDamage() { return currentWeaponData.Damage; }
 
 	public float GetSkillDamageEffect(string bulletType) {
@@ -690,7 +756,7 @@ public partial class Main : Node2D {
 		return 0;
 	}
 	
-	public int GetPlayerExtractPierce() { return ui.GetExtractStatValue("Pierce"); }
+	public int GetPlayerExtractPierce() { return GetEquippedExtractStatValue("Pierce"); }
 	public int GetPlayerEquippedWeaponPierce() { return currentWeaponData.Pierce; }
 	//pierce
 	
@@ -712,11 +778,11 @@ public partial class Main : Node2D {
 		return 0;
 	}
 	
-	public int GetPlayerExtractCritChance() { return ui.GetExtractStatValue("Crit Chance"); }
+	public int GetPlayerExtractCritChance() { return GetEquippedExtractStatValue("Crit Chance"); }
 	public int GetPlayerEquippedWeaponCritChance() { return currentWeaponData.Crit; }
 	
 	public int GetPlayerFinalCritDamage() { return GetPlayerExtractCritDamage() + GetPlayerEquippedWeaponCritDamage(); }
-	public int GetPlayerExtractCritDamage() { return ui.GetExtractStatValue("Crit Damage"); }
+	public int GetPlayerExtractCritDamage() { return GetEquippedExtractStatValue("Crit Damage"); }
 	public int GetPlayerEquippedWeaponCritDamage() { return currentWeaponData.CritDamage; }
 	//crit
 	
@@ -917,18 +983,18 @@ public partial class Main : Node2D {
 	
 	//player speed
 	public int GetPlayerLevelSpeed() { return 1200 + (vars.PlayerLevel * 5); }
-	public int GetPlayerExtractSpeed() { return ui.GetExtractStatValue("Speed") * 100; }
+	public int GetPlayerExtractSpeed() { return GetEquippedExtractStatValue("Speed") * 100; }
 	public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerExtractSpeed() + GetTinctureSpeed(); }
 	// public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
 	
 	//player shield
 	public int GetPlayerLevelShield() { return vars.PlayerLevel + 5; }
-	public int GetPlayerExtractShield() { return ui.GetExtractStatValue("Shield"); }
+	public int GetPlayerExtractShield() { return GetEquippedExtractStatValue("Shield"); }
 	public int GetPlayerFinalShield() { return GetPlayerLevelShield() + GetPlayerExtractShield(); }
 	
 	//player shield regen
 	public int GetPlayerLevelShieldRegen() { return 1; }
-	public int GetPlayerExtractShieldRegen() { return ui.GetExtractStatValue("Shield Regen"); }
+	public int GetPlayerExtractShieldRegen() { return GetEquippedExtractStatValue("Shield Regen"); }
 	public int GetPlayerFinalShieldRegen() { return GetPlayerLevelShieldRegen() + GetPlayerExtractShieldRegen(); }
 	
 	public float GetFinalWeaponSpeed() { return currentWeaponData.Speed; }
@@ -937,7 +1003,7 @@ public partial class Main : Node2D {
 	//extract drop
 	public float GetPlayerLevelExtractDropChance() { return vars.PlayerLevel * .01f; }
 	public float GetAreaRankExtractDropChance() { return GetAreaRank(vars.CurrentArea) * .1f; }
-	public float GetEquippedExtractsDropChance() { return ui.GetExtractStatValue("Extract Drop") * .1f; }
+	public float GetEquippedExtractsDropChance() { return GetEquippedExtractStatValue("Extract Drop") * .1f; }
 	public float GetPlayerFinalExtractDropChanceDisplay() { return (GetPlayerLevelExtractDropChance() + GetEquippedExtractsDropChance()); }
 	public float GetPlayerFinalExtractDropChance(int enemyRank) { //probably not done
 		// return 100; //for testing -delete
@@ -948,19 +1014,44 @@ public partial class Main : Node2D {
 	
 	//sucrose drop
 	public int GetPlayerLevelSucroseDrop() { return 0; }
-	public int GetPlayerExtractSucroseDrop() { return ui.GetExtractStatValue("Sucrose Drop"); }
+	public int GetPlayerExtractSucroseDrop() { return GetEquippedExtractStatValue("Sucrose Drop"); }
 	public int GetPlayerFinalSucroseDrop() { return 100 + GetPlayerExtractSucroseDrop(); }
 	
 	//exp drop
 	public int GetPlayerLevelExpDrop() { return 0; }
-	public int GetPlayerExtractExpDrop() { return ui.GetExtractStatValue("Exp Drop"); }
+	public int GetPlayerExtractExpDrop() { return GetEquippedExtractStatValue("Exp Drop"); }
 	public int GetPlayerFinalExpDrop() { return 100 + GetPlayerExtractExpDrop(); }
 	
 	//player pickup range
 	public int GetPlayerLevelPickupRange() { return (vars.PlayerLevel * 5) + 500; }
-	public int GetPlayerExtractPickupRange() { return ui.GetExtractStatValue("Pickup Range"); }
+	public int GetPlayerExtractPickupRange() { return GetEquippedExtractStatValue("Pickup Range"); }
 	public int GetPlayerFinalPickupRange() { return (GetPlayerLevelPickupRange() + GetPlayerExtractPickupRange()); }
 
+	private int GetEquippedExtractStatValue(string stat) {
+		var value = 0;
+		
+		var equippedExtracts = vars.savedResources.equippedExtracts;
+		if (equippedExtracts == null) return 0;
+		
+		foreach (var extract in equippedExtracts) {
+			switch (stat) {
+				case "Damage": value += extract.ExtractBaseDamage; break;
+				case "Pierce": value += extract.ExtractBasePierce; break;
+				case "Crit Chance": value += extract.ExtractBaseCritChance; break;
+				case "Crit Damage": value += extract.ExtractBaseCritDamage; break;
+				case "Shield": value += extract.ExtractBaseShield; break;
+				case "Shield Regen": value += extract.ExtractBaseShieldRegen; break;
+				case "Health": value += extract.ExtractBaseHealth; break;
+				case "Pickup Range": value += extract.ExtractBasePickupRange; break;
+				case "Speed": value += extract.ExtractBaseSpeed; break;
+				case "Extract Drop": value += extract.ExtractBaseExtractDrop; break;
+				case "Sucrose Drop": value += extract.ExtractBaseSucroseDrop; break;
+				case "Exp Drop": value += extract.ExtractBaseExpGain; break;
+			}
+		}
+		return value;
+	}
+	
 	public void SetCurrentWeaponData(int data) {
 		currentWeaponData = weaponDataList[data];
 		vars.CurrentFireMode = data; //maybe

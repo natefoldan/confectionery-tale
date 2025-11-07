@@ -7,8 +7,5 @@
 script = ExtResource("1_ykfrd")
 DisplayTexture = ExtResource("1_fctyg")
 Id = "materialShoe"
-Name = "Leather"
-CurrentOwned = 0.0
-TotalFound = 0.0
-InInventory = false
+Name = "Rubber"
 metadata/_custom_type_script = "uid://lkxh633fdqwo"

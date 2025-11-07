@@ -90,7 +90,7 @@ public partial class Enemy : CharacterBody2D {
         spriteHeight = thisSprite.Texture.GetHeight();
         GenerateNewWanderDirection();
         // GD.Print(thisEnemy.Id + ": " + spriteWidth + " | " + spriteHeight);
-        // speed = GD.RandRange(100, 300); //use this
+        speed = GD.RandRange(100, 300); //use this
         // speed = 500; //delete
         SetHitbox(thisSprite);
         SetPhysicsBlocker();
@@ -242,7 +242,7 @@ public partial class Enemy : CharacterBody2D {
         var chance = GetEnemyRank();
         if (chance > 40) { chance = 40; }
 
-        chance = 100; //fore testing -delete
+        // chance = 100; //fore testing -delete
         
         //check essence drop
         if (thisEnemy.ItemDrops != null && thisEnemy.ItemDrops.Length > 0) {

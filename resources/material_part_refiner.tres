@@ -1,0 +1,11 @@
+[gd_resource type="Resource" script_class="BaseMaterial" load_steps=3 format=3 uid="uid://de3lovqyxf1ka"]
+
+[ext_resource type="Script" uid="uid://lkxh633fdqwo" path="res://scripts/BaseMaterial.cs" id="1_50be3"]
+[ext_resource type="Texture2D" uid="uid://cbhrjgx7tqcro" path="res://assets/sprites/material-refiner.png" id="1_b1y3k"]
+
+[resource]
+script = ExtResource("1_50be3")
+DisplayTexture = ExtResource("1_b1y3k")
+Id = "woPartRefiner"
+Description = "Refiner Part"
+metadata/_custom_type_script = "uid://lkxh633fdqwo"

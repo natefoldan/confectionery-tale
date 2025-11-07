@@ -165,7 +165,8 @@ public partial class Variables : Node {
 		CurrentWorldObject = null;
 		CondenserBuilt = false;
 		RefinerBuilt = false;
-		
+		CondenserBuilt = true;
+		RefinerBuilt = true;
 		// SoftenerOwned = false;
 		// SpreaderOwned = true;
 		// SniperOwned = true;
