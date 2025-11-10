@@ -10,6 +10,7 @@ public partial class Player : CharacterBody2D {
     private Variables vars;
     private UI ui;
     private Main main;
+    private Assignments assignments;
     private ExtractManager extractManager;
     private TooltipHandler tooltips;
     private PackedScene popupTextScene;
@@ -93,6 +94,7 @@ public partial class Player : CharacterBody2D {
         vars.ShelteredStateChanged += SetPlayerState;
         ui = GetNode<UI>("/root/Main/UI");
         main = GetNode<Main>("/root/Main");
+        assignments = GetNode<Assignments>("/root/Main/UI/MainMenu/Assignments");
         extractManager = GetNode<ExtractManager>("/root/ExtractManager");
         tooltips = GetNode<TooltipHandler>("/root/TooltipHandler");
         popupTextScene = GD.Load<PackedScene>("res://scenes/popup_text.tscn");
@@ -571,6 +573,16 @@ public partial class Player : CharacterBody2D {
                         collectedItem = true;
                     }
                     break;
+                case WorldObject.Type.Container:
+                    // vars.CurrentWorldObject.PickupFixedExtract();
+                    vars.CurrentWorldObject = null;
+                    collectedItem = false;
+                    break;
+            }
+
+            if (vars.CurrentWorldObject.assignmentId != null) {
+                // GD.Print($"assignment {vars.CurrentWorldObject.assignmentId}");
+                assignments.CompleteAssignment(vars.CurrentWorldObject.assignmentId);
             }
             
             if (collectedItem) {

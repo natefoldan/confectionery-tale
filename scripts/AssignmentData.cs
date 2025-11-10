@@ -14,6 +14,7 @@ public partial class AssignmentData : Resource {
     [Export] public string Location { get; set; }
     [Export] public bool Tracked { get; set; }
     [Export] public bool Complete { get; set; }
+    [Export] public string RewardString { get; set; }
     [Export] public int PointReward { get; set; }
     // [Export] public Resource[] ItemRewards { get; set; }
     [Export] public string TrackingId { get; set; }
@@ -22,7 +23,7 @@ public partial class AssignmentData : Resource {
     
     public AssignmentData(
         string assignmentId, string name, bool obtained, bool major, int progress, int requirement, string description,
-        string location, bool tracked, bool complete, int pointReward, string trackingId) {
+        string location, bool tracked, bool complete, string reward, int pointReward, string trackingId) {
         Id = assignmentId;
         Name = name;
         Obtained = obtained;
@@ -33,6 +34,7 @@ public partial class AssignmentData : Resource {
         Location = location;
         Tracked = tracked;
         Complete = complete;
+        RewardString = reward;
         PointReward = pointReward;
         TrackingId = trackingId;
     }

@@ -984,8 +984,8 @@ public partial class Main : Node2D {
 	//player speed
 	public int GetPlayerLevelSpeed() { return 1200 + (vars.PlayerLevel * 5); }
 	public int GetPlayerExtractSpeed() { return GetEquippedExtractStatValue("Speed") * 100; }
-	public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerExtractSpeed() + GetTinctureSpeed(); }
-	// public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
+	// public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerExtractSpeed() + GetTinctureSpeed(); }
+	public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
 	
 	//player shield
 	public int GetPlayerLevelShield() { return vars.PlayerLevel + 5; }

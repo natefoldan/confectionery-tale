@@ -337,7 +337,7 @@ public partial class ExtractManager : Node {
 	
 	//this generates extract that is manually set in the world
 	public BaseExtract GenerateFixedExtract(int tier, Godot.Collections.Dictionary<string, int> fixedStats) {
-		GD.Print("generate");
+		// GD.Print("generate");
 		BaseExtract fixedExtractData = new BaseExtract();
 
 		fixedExtractData.Id = Guid.NewGuid().ToString();

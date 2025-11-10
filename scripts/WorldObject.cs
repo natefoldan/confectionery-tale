@@ -9,9 +9,10 @@ namespace ConfectioneryTale.scripts;
 public partial class WorldObject : StaticBody2D {
     [Export] private string name;
     [Export] public string objectId;
+    [Export] public string assignmentId;
     
     [Export] public Type ObjectType { get; set; }
-    public enum Type { None, Extract, Material, Bullet }
+    public enum Type { None, Extract, Material, Bullet, Container }
     
     [Export] public Tutorial TutorialType { get; set; }
     public enum Tutorial { None, Extract, Cracking, Bullet }
@@ -38,6 +39,7 @@ public partial class WorldObject : StaticBody2D {
     [Export(PropertyHint.Range, "1,5")] public int Tier { get; private set; } = 1;
     [Export] public int Damage { get; private set; } = 0;
     [Export] public int Speed { get; private set; } = 0;
+    [Export] public int Shield { get; private set; } = 0;
     
     private Main main;
     private Variables vars;
@@ -208,7 +210,10 @@ public partial class WorldObject : StaticBody2D {
         cracked = true;
         main.GainCrackingExp(GetCrackingExp());
         SaveWorldObjectData(); //uncomment
-        QueueFree();
+        
+        var childObject = GetChildren().OfType<WorldObject>().FirstOrDefault();
+        if (childObject != null) { childObject.QueueFree(); } //if object has a child world object
+        else { QueueFree(); } //otherwise remove whole object
     }
 
     private int GetCrackingExp() {
@@ -247,6 +252,7 @@ public partial class WorldObject : StaticBody2D {
         var fixedStats = new Godot.Collections.Dictionary<string, int>();
         if (Damage > 0) fixedStats.Add("Damage", Damage);
         if (Speed > 0) fixedStats.Add("Speed", Speed);
+        if (Shield > 0) fixedStats.Add("Shield", Shield);
         // if (Pierce > 0) fixedStats.Add("Pierce", Pierce);
         // if (ExpGain > 0) fixedStats.Add("Exp Gain", ExpGain);
 

@@ -1578,14 +1578,23 @@ public partial class UI : CanvasLayer {
             WeaponData weaponData = main.GetAllWeaponData()[bulletType];
             popup.HeaderText("Obtained New Bullet Type");
             popup.SubHeaderText(weaponData.Name.ToUpper());
-            popup.Description(weaponData.Description);
+            popup.Description(weaponData.Description, 24);
             popup.ToggleButtons("bullet");
         }
 
         if (assignmentData != null) {
+            if (assignmentData.Complete) {
+                popup.HeaderText("COMPLETED ASSIGNMENT");
+                popup.SubHeaderText(assignmentData.Name);
+                if (assignmentData.RewardString != "") {
+                    popup.Description($"Obtained {assignmentData.RewardString}" +
+                                      $"\n+{assignmentData.PointReward} Skill Points", 32);
+                }
+                return;
+            }
             popup.HeaderText("Obtained New Assignment");
             popup.SubHeaderText(assignmentData.Name);
-            popup.Description(assignmentData.Description);
+            popup.Description(assignmentData.Description, 24);
             popup.ToggleButtons("assignment");
             popup.SetAssignment(assignmentData);
             popup.PopupShowAssignment += HandlePopupShowAssignment;

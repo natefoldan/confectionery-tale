@@ -29,7 +29,6 @@ public partial class PopupBox : TextureRect {
     }
     
     public void HeaderText(string text) {
-        // Set("theme_override_font_sizes/font_size", size); //dont need to set font size
         header.Text = text;
     }
     
@@ -37,7 +36,8 @@ public partial class PopupBox : TextureRect {
         subHeader.Text = text;
     }
     
-    public void Description(string text) {
+    public void Description(string text, int fontSize) {
+        Set("theme_override_font_sizes/font_size", fontSize);
         description.Text = text;
     }
     
