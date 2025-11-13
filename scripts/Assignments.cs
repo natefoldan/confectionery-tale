@@ -25,7 +25,7 @@ public partial class Assignments : Control {
     private TextureButton assignmentTrackerButton;
     private TextureButton MA01Button;
     private TextureButton MA02Button;
-    private TextureButton assignmentMINORButton;
+    private TextureButton MN01Button;
     private List<TextureButton> allAssignmentButtons;
     private Texture2D assignmentButtonTextureNormal;
     private Texture2D assignmentButtonTextureActive;
@@ -63,8 +63,8 @@ public partial class Assignments : Control {
         assignmentTrackerButton = ui.GetNode<TextureButton>("MainMenu/Assignments/Assignment/AssignmentTracker");
         MA01Button = ui.GetNode<TextureButton>("MainMenu/Assignments/ButtonContainer/ScrollContainer/VBoxContainer/MA01");
         MA02Button = ui.GetNode<TextureButton>("MainMenu/Assignments/ButtonContainer/ScrollContainer/VBoxContainer/MA02");
-        assignmentMINORButton = ui.GetNode<TextureButton>("MainMenu/Assignments/ButtonContainer/ScrollContainer/VBoxContainer/AssignmentMINOR");
-        allAssignmentButtons = new List<TextureButton> { MA01Button, MA02Button, assignmentMINORButton };
+        MN01Button = ui.GetNode<TextureButton>("MainMenu/Assignments/ButtonContainer/ScrollContainer/VBoxContainer/MN01");
+        allAssignmentButtons = new List<TextureButton> { MA01Button, MA02Button, MN01Button };
         assignmentButtonTextureNormal = GD.Load<Texture2D>("res://assets/btn-blue-468x90.png");
         assignmentButtonTextureActive = GD.Load<Texture2D>("res://assets/btn-blue-468x90-disabled.png");
         assignmentTracker = ui.GetNode<AssignmentTracker>("MainMenu/Assignments/Assignment/AssignmentTracker");
@@ -128,30 +128,71 @@ public partial class Assignments : Control {
         CheckAssignmentButtons();
     }
     
-    public void CompleteAssignment(string assignmentId) {
-        // var assignment1 = GetAssignmentDataById("AssignmentOne");
+    public void GainAssignmentDataOnly(string assignmentId) {
+        var newAssignmentData = GetAssignmentDataById(assignmentId);
+        newAssignmentData.Obtained = true; 
+        UpdateSavedAssignmentData();
+    }
+
+    public void ShowGainedAssignmentPopup(string assignmentId) {
+        var newAssignmentData = GetAssignmentDataById(assignmentId);
+        if (newAssignmentData == null) return;
+        // This calls your existing UI function to show the "New" popup
+        ui.ShowPopupBox(false, -1, newAssignmentData); 
+    }
+
+    public void GainAssignment(string assignmentId) {
+        GainAssignmentDataOnly(assignmentId);
+        ShowGainedAssignmentPopup(assignmentId);
+    }
+
+    public void CompleteAssignmentDataOnly(string assignmentId) {
         var assignment = GetAssignmentDataById(assignmentId);
         assignment.Complete = true;
-        
-        //if was being tracked, stop tracking it now
         if (assignment.Tracked) {
             assignment.Tracked = false;
             RemoveEdgeIndicator(assignment.TrackingId);
         }
-        
-        ui.ShowPopupBox(false, -1, assignment);
-        UpdateSavedAssignmentData(); //IMPORTANT
-        vars.SaveGameData();
-    }    
-    
-    public void GainAssignment(string assignmentId) {
-        var newAssignmentData = GetAssignmentDataById(assignmentId);
-        newAssignmentData.Obtained = true; 
-        ui.ShowPopupBox(false, -1, newAssignmentData);
         UpdateSavedAssignmentData();
-        CheckAssignmentButtons();
-        // var itemReward = main.GetWorldObjectById(newAssignmentData.RewardId);
+        vars.SaveGameData();
     }
+
+    public void ShowCompleteAssignmentPopup(string assignmentId) {
+        var assignment = GetAssignmentDataById(assignmentId);
+        if (assignment == null) return;
+        // This calls your existing UI function to show the "Complete" popup
+        ui.ShowPopupBox(false, -1, assignment); 
+    }
+
+    public void CompleteAssignment(string assignmentId) {
+        CompleteAssignmentDataOnly(assignmentId);
+        ShowCompleteAssignmentPopup(assignmentId);
+    }
+    
+    // public void CompleteAssignment(string assignmentId) { //prev -WORKS
+    //     // var assignment1 = GetAssignmentDataById("AssignmentOne");
+    //     var assignment = GetAssignmentDataById(assignmentId);
+    //     assignment.Complete = true;
+    //     
+    //     //if was being tracked, stop tracking it now
+    //     if (assignment.Tracked) {
+    //         assignment.Tracked = false;
+    //         RemoveEdgeIndicator(assignment.TrackingId);
+    //     }
+    //     
+    //     ui.ShowPopupBox(false, -1, assignment);
+    //     UpdateSavedAssignmentData(); //IMPORTANT
+    //     vars.SaveGameData();
+    // }    
+    //
+    // public void GainAssignment(string assignmentId) { //prev -WORKS
+    //     var newAssignmentData = GetAssignmentDataById(assignmentId);
+    //     newAssignmentData.Obtained = true; 
+    //     ui.ShowPopupBox(false, -1, newAssignmentData);
+    //     UpdateSavedAssignmentData();
+    //     CheckAssignmentButtons();
+    //     // var itemReward = main.GetWorldObjectById(newAssignmentData.RewardId);
+    // }
 
     private void UpdateAssignmentTrackerButton() {
         assignmentTracker.SetTrackerId(currentAssignmentData.TrackingId);
@@ -320,9 +361,9 @@ public partial class Assignments : Control {
     private void BuildAssignmentData() {
         assignmentDataList = new List<AssignmentData>();
         //string assignmentId, string name, bool obtained, bool major, int progress, int requirement, string description, string location, bool tracked, bool complete, int pointReward, Resource[] itemRewards
-        assignmentDataList.Add(new AssignmentData("MA01", "Claim Your Base", false, true,
+        assignmentDataList.Add(new AssignmentData("MA01", "Access Your Base", false, true,
             0, 1, "Stand close to the door to unseal it", "Sugarcane Plain",
-            false, false, "Base Access", 0, "ShelterPlainsDoor")); //rewardId: navTestOne -delete this comment
+            false, false, "Fast Travel - Sugarcane Plain", 0, "ShelterPlainsDoor"));
 		
         
         assignmentDataList.Add(new AssignmentData("MA02", "Assignment Two", false, true,
@@ -330,11 +371,8 @@ public partial class Assignments : Control {
             false, false, "Condenser Part", 2, "woPartCondenser"));
         
         
-        // assignmentDataList.Add(new AssignmentData("AssignmentTwo", "Assignment Two", false, true, //delete
-        //     0, 10, "assignment two description", "two location", false, false, 2, "woSoftener"));
-		
-        assignmentDataList.Add(new AssignmentData("AssignmentMINOR", "Assignment MINOR", false, true,
-            0, 10, "assignment three description", "three location", false, false, "reward", 3, ""));
+        assignmentDataList.Add(new AssignmentData("MN01", "Assignment MINOR", false, false,
+            0, 10, "assignment three description", "three location", false, false, "reward", 3, "worldExtractDamage"));
     }
 
     public AssignmentData GetAssignmentDataById(string id) {

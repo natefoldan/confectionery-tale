@@ -48,6 +48,7 @@ public partial class Variables : Node {
     public int PointRank { get; set; }
     public bool EnteredPlain { get; set; }
     public bool EnteredGrove { get; set; }
+    public double TotalSteps { get; set; }
     
     //skills
     public int SkillCrackingLevel { get; set; }
@@ -122,7 +123,6 @@ public partial class Variables : Node {
     //not saved
     public bool GameLoaded { get; set; }
     public bool CutsceneActive { get; set; }
-    // public string CurrentWorldObject { get; set; } //old way -maybe
     public WorldObject CurrentWorldObject { get; set; } = null;
     public bool IsCracking { get; set; }
     
@@ -157,16 +157,15 @@ public partial class Variables : Node {
 		SoundOn = false;
 		MusicOn = false;
 		// MusicOn = true;
-		PlayerLevel = 1;
-		CurrentSucrose = 0;
-		CurrentPlayerExp = 0;
-		// SkillCrackingLevel = 1;
-		// CurrentWorldObject = ""; //old way
+		// PlayerLevel = 1;
+		// CurrentSucrose = 0;
+		// CurrentPlayerExp = 0;
+		SkillCrackingLevel = 1;
 		CurrentWorldObject = null;
-		CondenserBuilt = false;
-		RefinerBuilt = false;
-		CondenserBuilt = true;
-		RefinerBuilt = true;
+		// CondenserBuilt = false;
+		// RefinerBuilt = false;
+		// CondenserBuilt = true;
+		// RefinerBuilt = true;
 		// SoftenerOwned = false;
 		// SpreaderOwned = true;
 		// SniperOwned = true;
@@ -175,7 +174,7 @@ public partial class Variables : Node {
 		TinctureHealthAmount = 4;
 		TinctureSpeedAmount = 4;
 		TinctureConcealAmount = 4;
-		SkillCraftingLevel = 1; //delete
+		// SkillCraftingLevel = 1; //delete
 		
 		// currentCompassTarget = "navTestOne";
 		currentCompassTarget = "";

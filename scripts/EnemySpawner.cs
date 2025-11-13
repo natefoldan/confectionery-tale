@@ -18,6 +18,7 @@ public partial class EnemySpawner : StaticBody2D {
     public enum Type { Blue, Red, Purple }
     
     [Export] public float spawnRate;
+    [Export] public float spawnRateVariation = 0.2f;
     [Export] public Texture2D blueTexture;
     [Export] public Texture2D redTexture;
     [Export] public Texture2D purpleTexture;
@@ -40,6 +41,7 @@ public partial class EnemySpawner : StaticBody2D {
     private Vector2 _initialPosition;
     private Vector2 _lastCameraPosition = Vector2.Zero;
     private bool active;
+    private float currentSpawnTime;
     
     //cleansing
     private Array<SavedPortalData> savedPortalDataArray = new Array<SavedPortalData>();
@@ -91,6 +93,7 @@ public partial class EnemySpawner : StaticBody2D {
         enemyScene = GD.Load<PackedScene>("res://scenes/enemy.tscn");
         sprite = GetNode<Sprite2D>("Sprite2D");
         swirl = GetNode<Sprite2D>("Swirl");
+        currentSpawnTime = GetNewSpawnTime();
         cleanseBar = GetNode<TextureProgressBar>("CleanseBar");
         ResetCleanseBar();
         
@@ -156,25 +159,41 @@ public partial class EnemySpawner : StaticBody2D {
         // if (enemies.Length < 1) { return; }
         spawnTimer += (float)delta;
     
-        if (spawnTimer >= spawnRate) {
+        if (spawnTimer >= currentSpawnTime) { 
             BaseEnemy newEnemy = enemies[GD.RandRange(0, enemies.Length - 1)];
             if (what != null) { newEnemy = what; }
             Enemy enemy = enemyScene.Instantiate<Enemy>();
             totalEnemies += 1;
-            // enemy.SetupEnemy(newEnemy);
             enemy.SetThisEnemy(newEnemy);
-            enemy.GlobalPosition = GlobalPosition; //enemy position in middle of spawner
+            enemy.GlobalPosition = GlobalPosition;
             GetTree().Root.AddChild(enemy);
-            // spawnTimer -= 2.0f; // Reset the timer, potentially with a remainder
-            spawnTimer -= GetSpawnRate(); // Reset the timer, potentially with a remainder
+        
+            //reset the timer (keeping the overflow)
+            spawnTimer -= currentSpawnTime; 
+        
+            //get a new random spawn time for the *next* enemy
+            currentSpawnTime = GetNewSpawnTime(); 
         }
+        
+        
+        // if (spawnTimer >= spawnRate) { //original -delete
+        //     BaseEnemy newEnemy = enemies[GD.RandRange(0, enemies.Length - 1)];
+        //     if (what != null) { newEnemy = what; }
+        //     Enemy enemy = enemyScene.Instantiate<Enemy>();
+        //     totalEnemies += 1;
+        //     // enemy.SetupEnemy(newEnemy);
+        //     enemy.SetThisEnemy(newEnemy);
+        //     enemy.GlobalPosition = GlobalPosition; //enemy position in middle of spawner
+        //     GetTree().Root.AddChild(enemy);
+        //     spawnTimer -= GetSpawnRate(); //reset the timer, potentially with a remainder
+        // }
     }
 
-    private float GetSpawnRate() {
-        return 1.5f;
-        // return .5f;
-        // return 3.5f;
-        return 1.5f;
+    private float GetNewSpawnTime() {
+        float min = spawnRate - spawnRateVariation;
+        float max = spawnRate + spawnRateVariation;
+        float randomPercent = GD.Randf(); 
+        return (randomPercent * (max - min)) + min;
     }
     
     //cleansing

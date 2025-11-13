@@ -580,10 +580,7 @@ public partial class Player : CharacterBody2D {
                     break;
             }
 
-            if (vars.CurrentWorldObject.assignmentId != null) {
-                // GD.Print($"assignment {vars.CurrentWorldObject.assignmentId}");
-                assignments.CompleteAssignment(vars.CurrentWorldObject.assignmentId);
-            }
+            main.CheckAssignments();
             
             if (collectedItem) {
                 vars.CollectedWorldObjects.Add(objectId);
@@ -593,7 +590,7 @@ public partial class Player : CharacterBody2D {
             }
         }
     }
-    
+
     private void HandleFiring(double delta) {
         int currentMode = vars.CurrentFireMode;
         
@@ -706,10 +703,14 @@ public partial class Player : CharacterBody2D {
         // if (direction != Vector2.Zero) { PlayerMoving(); }
         if (direction != Vector2.Zero) {
             direction = direction.Normalized();
+            vars.TotalSteps += .1f;
+            
         }
         velocity.X = direction.X * main.GetPlayerFinalSpeed();
         velocity.Y = direction.Y * main.GetPlayerFinalSpeed();
         Velocity = velocity;
+
+        // GD.Print(vars.TotalSteps);
     }
 
     private void AnimatePlayer() {

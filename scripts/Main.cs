@@ -25,6 +25,7 @@ public partial class Main : Node2D {
 	private WeaponData weaponData;
 	private WeaponData currentWeaponData;
 	private List<WeaponData> weaponDataList;
+	public Vector2 PlayerGlobalPosition { get; private set; }
 	
 	private Sprite2D playerSpawnPortal;
 	private StaticBody2D shelterPlain;
@@ -49,6 +50,9 @@ public partial class Main : Node2D {
 	private Tent tent;
 
 	private int tinctureSpeedIncrease = 0;
+	
+	private Timer enemyCullingTimer;
+	private double despawnDistanceSquared;
 
 	public override void _Ready() {
 		SetupGame();
@@ -95,11 +99,42 @@ public partial class Main : Node2D {
 		tentPlacementPreview.AreaEntered += OnPreviewAreaEntered;
 		tentPlacementPreview.AreaExited += OnPreviewAreaExited;
 		
+		//enemy distance despawn logic
+		// set the distance (in pixels). using squared distance is much faster for checks.
+		// e.g., 3000 pixels. 3000 * 3000 = 9,000,000
+		double despawnDistance = 40000.0; 
+		despawnDistanceSquared = despawnDistance * despawnDistance;
+
+		enemyCullingTimer = new Timer();
+		enemyCullingTimer.WaitTime = 5.0; // Check every 5 seconds
+		enemyCullingTimer.Timeout += OnEnemyCullingTimerTimeout;
+		AddChild(enemyCullingTimer);
+		enemyCullingTimer.Start();
+		
 		//dev
 		if (vars.HideDev) { GetNode<GridContainer>("UI/dev").Visible = false; }
 		if (vars.HideHud) { GetNode<Control>("UI/WorldHud").Visible = false; }
     }
 
+    private void OnEnemyCullingTimerTimeout() {
+	    //get the player's position once.
+	    Vector2 playerPos = PlayerGlobalPosition; 
+
+	    var enemies = GetTree().GetNodesInGroup("enemies");
+    
+	    // GD.Print($"Culling check: {enemies.Count} enemies on screen.");
+
+	    foreach (var node in enemies) {
+		    if (node is CharacterBody2D enemy) {
+			    // 5. Check squared distance (it's faster than DistanceTo)
+			    if (enemy.GlobalPosition.DistanceSquaredTo(playerPos) > despawnDistanceSquared) {
+				    enemy.QueueFree();
+				    // GD.Print("ENEMY CULLED");
+			    }
+		    }
+	    }
+    }
+    
     public override void _Process(double delta) {
 	    if (isPlacing) {
 		    tentPlacementPreview.GlobalPosition = GetGlobalMousePosition();
@@ -107,6 +142,12 @@ public partial class Main : Node2D {
 	    }
     }
 
+    public override void _PhysicsProcess(double delta) {
+	    PlayerGlobalPosition = player.GlobalPosition;
+    }
+
+    
+    
     private void TESTCUTSCENE() {
 	    GetTree().Paused = true; // Pause the game
 	    var cutscene = cutsceneManagerScene.Instantiate<CutsceneManager>();
@@ -231,6 +272,23 @@ public partial class Main : Node2D {
 	    }
     }
 
+    public void CheckAssignments() {
+	    var assignmentToComplete = vars.CurrentWorldObject.assignmentId;
+	    var assignmentToGain = vars.CurrentWorldObject.newAssignmentId;
+            
+	    //gaining and completing assignment
+	    if (!string.IsNullOrEmpty(assignmentToComplete) && !string.IsNullOrEmpty(assignmentToGain)) {
+		    assignments.GainAssignmentDataOnly(assignmentToGain);
+		    assignments.CompleteAssignmentDataOnly(assignmentToComplete);
+		    assignments.ShowGainedAssignmentPopup(assignmentToGain);
+		    assignments.ShowCompleteAssignmentPopup(assignmentToComplete);
+	    } else if (!string.IsNullOrEmpty(assignmentToComplete)) { //only completing
+		    assignments.CompleteAssignment(assignmentToComplete);
+	    } else if (!string.IsNullOrEmpty(assignmentToGain)) { //only gaining
+		    assignments.GainAssignment(assignmentToGain);
+	    }
+    }
+    
     [Export] private Texture2D sucroseTextureOne; //MOVE THESE
     [Export] private Texture2D sucroseTextureTen;
     [Export] private Texture2D sucroseTextureHundred;
@@ -984,8 +1042,8 @@ public partial class Main : Node2D {
 	//player speed
 	public int GetPlayerLevelSpeed() { return 1200 + (vars.PlayerLevel * 5); }
 	public int GetPlayerExtractSpeed() { return GetEquippedExtractStatValue("Speed") * 100; }
-	// public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerExtractSpeed() + GetTinctureSpeed(); }
-	public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
+	public int GetPlayerFinalSpeed() { return GetPlayerLevelSpeed() + GetPlayerExtractSpeed() + GetTinctureSpeed(); }
+	// public int GetPlayerFinalSpeed() { return 3000; } //for testing -delete
 	
 	//player shield
 	public int GetPlayerLevelShield() { return vars.PlayerLevel + 5; }

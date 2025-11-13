@@ -13,6 +13,7 @@ public partial class Enemy : CharacterBody2D {
     private AnimationPlayer animationPlayer;
     public string EnemyId { get; private set; } //unique per enemy
     private float speed { get; set; } = 150.0f;
+    private float homeSpeed { get; set; } = 300.0f;
     private float wanderSpeed { get; set; }
     private double currentHealth;
     private double maxHealth;
@@ -90,7 +91,7 @@ public partial class Enemy : CharacterBody2D {
         spriteHeight = thisSprite.Texture.GetHeight();
         GenerateNewWanderDirection();
         // GD.Print(thisEnemy.Id + ": " + spriteWidth + " | " + spriteHeight);
-        speed = GD.RandRange(100, 300); //use this
+        speed = GD.RandRange(120, 400); //use this
         // speed = 500; //delete
         SetHitbox(thisSprite);
         SetPhysicsBlocker();
@@ -118,7 +119,7 @@ public partial class Enemy : CharacterBody2D {
 
     private double GetMaxhealth() {
         // return 10000; //for testing delete
-        var health = Math.Ceiling(Math.Pow(GetEnemyRank(), 1.8) * 10);
+        var health = Math.Ceiling(Math.Pow(GetEnemyRank(), 1.9) * 10);
         if (corrupted) { health *= 1.2f; }
         return Math.Ceiling(health);
     }
@@ -207,7 +208,8 @@ public partial class Enemy : CharacterBody2D {
     }
     
     private void MoveAndTrack(double delta) {
-        Vector2 playerPosition = main.GetPlayerPosition();
+        // Vector2 playerPosition = main.GetPlayerPosition(); //original -laggy
+        Vector2 playerPosition = main.PlayerGlobalPosition;
 
         //calculate the direction vector from the enemy to the player
         Vector2 direction = (playerPosition - Position).Normalized();
@@ -229,7 +231,7 @@ public partial class Enemy : CharacterBody2D {
         }
         Vector2 direction = (homePoint - Position).Normalized();
         // Vector2 velocity = direction * speed; //before speed mod
-        Vector2 velocity = direction * (speed * chilledSpeedModifier * crackingSpeedModifier);
+        Vector2 velocity = direction * (homeSpeed * chilledSpeedModifier * crackingSpeedModifier);
         MoveAndCollide(velocity * (float)delta);
         
         if (direction.X < 0) { thisSprite.FlipH = false; }

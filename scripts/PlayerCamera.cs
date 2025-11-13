@@ -20,8 +20,10 @@ public partial class PlayerCamera : Camera2D {
 		viewportSize = new Vector2(1920, 1080); //get size
 		// currentZoomX = 1.0f;
 		// currentZoomY = 1.0f;
-		currentZoomX = .3f;
-		currentZoomY = .3f;
+		// currentZoomX = .3f;
+		// currentZoomY = .3f;
+		currentZoomX = .25f;
+		currentZoomY = .25f;
 		
 		// currentZoomX = .01f;
 		// currentZoomY = .01f;

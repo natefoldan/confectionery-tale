@@ -26,6 +26,7 @@ public partial class PopupBox : TextureRect {
         description = GetNode<Label>("Description");
         hotkey = GetNode<Label>("Hotkey");
         HideButtons();
+        AddToGroup("popups");
     }
     
     public void HeaderText(string text) {
@@ -80,7 +81,18 @@ public partial class PopupBox : TextureRect {
     }
     
     private void Close() {
-        GetTree().Paused = false;
+        RemoveFromGroup("popups"); //remove self from group *before* checking
+    
+        //only unpause if this is the lasst popup on screen
+        if (GetTree().GetNodesInGroup("popups").Count == 0) {
+            GetTree().Paused = false;
+        }
+    
         QueueFree();
     }
+    
+    // private void Close() { //original
+    //     GetTree().Paused = false;
+    //     QueueFree();
+    // }
 }

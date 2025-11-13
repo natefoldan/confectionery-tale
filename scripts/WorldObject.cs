@@ -10,6 +10,7 @@ public partial class WorldObject : StaticBody2D {
     [Export] private string name;
     [Export] public string objectId;
     [Export] public string assignmentId;
+    [Export] public string newAssignmentId;
     
     [Export] public Type ObjectType { get; set; }
     public enum Type { None, Extract, Material, Bullet, Container }
@@ -209,6 +210,7 @@ public partial class WorldObject : StaticBody2D {
         // GD.Print("crack complete");
         cracked = true;
         main.GainCrackingExp(GetCrackingExp());
+        main.CheckAssignments();
         SaveWorldObjectData(); //uncomment
         
         var childObject = GetChildren().OfType<WorldObject>().FirstOrDefault();

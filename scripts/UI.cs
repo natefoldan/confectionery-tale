@@ -168,8 +168,8 @@ public partial class UI : CanvasLayer {
     private Label worldTextLabel;
     private Timer worldTextTimer;
     private StringBuilder currentDisplayedText = new StringBuilder();
-    private float wordsPerSecond = 20f;
-    private float charactersPerSecond = 100f;
+    private float wordsPerSecond = 10f;
+    private float charactersPerSecond = 30f;
     private int currentWordIndex = 0;
     private int currentCharIndex = 0;
     private string[] words; //not used with characters
@@ -518,9 +518,6 @@ public partial class UI : CanvasLayer {
     // public void StartTextReveal(string text) { //by word
     //     if (worldTextLabel == null || worldTextTimer == null) { return; }
     //     
-    //     var fullTextToDisplay = "Lorem ipsum dolor sit amet, consec adipisc elit, sed do eiusmod tempor incidid ut labore et dolore magna aliqua";
-    //     // var fullTextToDisplay = text;
-    //     
     //     //split the text into words, handling multiple spaces and removing empty entries
     //     words = fullTextToDisplay.Split(new char[] { ' ' }, StringSplitOptions.RemoveEmptyEntries);
     //     
@@ -536,7 +533,7 @@ public partial class UI : CanvasLayer {
     //         worldTextLabel.Text = fullTextToDisplay;
     //     }
     // }
-
+    //
     // private void OnWorldTextTimerTimeout() { //by word
     //     if (currentWordIndex < words.Length) {
     //         //append the next word and a space (if it's not the last word)
@@ -558,17 +555,17 @@ public partial class UI : CanvasLayer {
     //     }
     // }
     
-    private string fullTextToDisplay = "Lorem ipsum dolor sit amet, consec adipisc elit, sed do eiusmod tempor incidid ut labore et dolore magna aliqua";
+    private string fullTextToDisplay = "Welcome to Sweetopia.\nline break test, also length test. i don't know how long but this is pretty long"; //Time to begin your Confectionery Tale..
     
     public void StartTextReveal(string text) { //by character
         if (worldTextLabel == null || worldTextTimer == null) { return; }
         
-        // var fullTextToDisplay = "Lorem ipsum dolor sit amet, consec adipisc elit, sed do eiusmod tempor incidid ut labore et dolore magna aliqua";
-        // var fullTextToDisplay = text;
+        worldTextLabel.Visible = true;
+        worldTextLabel.Modulate = new Color(1, 1, 1, 1);
         
         currentCharIndex = 0; //start from the first character
         worldTextLabel.Text = "";
-
+    
         if (fullTextToDisplay.Length > 0) {
             worldTextTimer.WaitTime = 1.0f / charactersPerSecond; //calculate wait time per character (1 / characters per second)
             worldTextTimer.Start(); // Start the timer
@@ -578,8 +575,7 @@ public partial class UI : CanvasLayer {
     }
     
     private void OnWorldTextTimerTimeout() { //by character
-        // Check if there are more characters to reveal
-        if (currentCharIndex < fullTextToDisplay.Length) {
+        if (currentCharIndex < fullTextToDisplay.Length) { //check if there are more characters to reveal
             // Append the next character to the currently displayed text
             // For character-by-character, direct string concatenation is often okay,
             // as Label.Text setter in Godot's C# glue has some optimizations.
@@ -591,12 +587,23 @@ public partial class UI : CanvasLayer {
         // Check if all characters have been revealed
         if (currentCharIndex >= fullTextToDisplay.Length) {
             worldTextTimer.Stop(); // Stop the timer as reveal is complete
-            GD.Print("Character reveal finished.");
+            // GD.Print("Character reveal finished.");
             // Optional: Emit a signal here if something else needs to know the reveal is complete
             // EmitSignal(SignalName.RevealComplete);
+            
+            Tween fadeTween = CreateTween();
+            // fadeTween.SetPauseMode(Node.PauseModeEnum.Process); //run even if game paused -delete
+            fadeTween.TweenInterval(1.5f);
+            fadeTween.TweenProperty(worldTextLabel, "modulate:a", 0.0f, 1.0f);
+            fadeTween.TweenCallback(Callable.From(OnDialogueTextFadeOutFinished));
+            fadeTween.Play();
         } else {
             worldTextTimer.Start(); //restart the timer for the next character
         }
+    }
+    
+    private void OnDialogueTextFadeOutFinished() {
+        worldTextLabel.Visible = false;
     }
     
     private void SetupMenus() {
@@ -1570,7 +1577,8 @@ public partial class UI : CanvasLayer {
     }
 
     public void ShowPopupBox(bool tutorial, int bulletType, AssignmentData assignmentData) {
-        GetTree().Paused = true;
+        // GetTree().Paused = true; //prev
+        if (!GetTree().IsPaused()) { GetTree().Paused = true; } //only pause if not paused by another popup
         PopupBox popup = popupBoxScene.Instantiate<PopupBox>();
         AddChild(popup);
         
