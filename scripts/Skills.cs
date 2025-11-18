@@ -542,7 +542,7 @@ public partial class Skills : Control {
     }
 
     private int GetMaxSkillPoints() {
-        // return 100;
+        return 100;
         var level = Math.Floor(vars.PlayerLevel / 2.0f);
         var assignmentPoints = 0;
         var assignmentData = assignments.GetAllAssignmentData();

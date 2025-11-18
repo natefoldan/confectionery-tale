@@ -558,6 +558,7 @@ public partial class Main : Node2D {
 	}
 
 	private void CheckPlayerLevel() {
+		if (vars.PlayerLevel >= 100) { return; }
 		var maxExp = GetPlayerExpNext();
 		if (vars.CurrentPlayerExp >= maxExp) {
 			// settings.PlayLevelSound();
@@ -575,9 +576,9 @@ public partial class Main : Node2D {
 	}
 
 	public void GainPlayerExp(double amount) {
+		if (vars.PlayerLevel >= 100) { return; }
 		amount *= GetPlayerFinalExpDrop() * .01;
 		var final = Math.Ceiling(amount);
-		// GD.Print("gained exp: " + final);
 		vars.CurrentPlayerExp += final;
 		ui.UpdateExpBar();
 		CheckPlayerLevel();
@@ -702,6 +703,7 @@ public partial class Main : Node2D {
 	}
 
 	public double GetTentBuildTime() {
+		return 0;
 		return 4; //for testing -delete
 		return 10 - vars.SkillCampingLevel;
 	}
@@ -738,13 +740,17 @@ public partial class Main : Node2D {
 		if (vars.TinctureSpeedAmount < 1) { return; }
 		if (tinctureSpeedIncrease > 0) { return; }
 		vars.TinctureSpeedAmount -= 1;
-		vars.TinctureSpeedCooldown = 3;
+		vars.TinctureSpeedCooldown = 5;
 		ui.UpdateTinctureSpeedButton();
-		tinctureSpeedIncrease = 200;
+		SetTinctureSpeedIncrease(1000);
 	}
 
 	private int GetTinctureSpeed() {
 		return vars.SkillCraftingLevel * tinctureSpeedIncrease;
+	}
+
+	public void SetTinctureSpeedIncrease(int amount) {
+		tinctureSpeedIncrease = amount;
 	}
 	
 	private void UseTinctureConceal() {
@@ -1168,7 +1174,7 @@ public partial class Main : Node2D {
 			0, "auto", 1, .2f, 180, 4000, 1, 0, 1, 2, 0, 0, 1));
 		
 		weaponDataList.Add(new WeaponData(softenerTexture, softenerCrosshairs, "bulletSoftener", "Softener", "Large bullet that has\n high pierce and applies melt",
-			1, "auto", 2, 1f, 120, 800, 8, 0, 1, 2, 5, 0, 1));
+			1, "auto", 2, 1f, 120, 1200, 8, 0, 1, 2, 5, 0, 1));
 		
 		weaponDataList.Add(new WeaponData(spreaderTexture, spreaderCrosshairs, "bulletSpreader", "Spreader", "Three bullets that fire in a cone",
 			2, "auto", 1, .5f, 180, 2000, 1, 0, 1, 2, 0, 0, 1));

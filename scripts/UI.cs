@@ -10,12 +10,10 @@ using Array = Godot.Collections.Array;
 namespace ConfectioneryTale.scripts;
 
 public partial class UI : CanvasLayer {
-    [Signal]
-    public delegate void ExtractInventoryChangedEventHandler();
+    [Signal] public delegate void ExtractInventoryChangedEventHandler();
 
     // [Signal] public delegate void MaterialsChangedEventHandler(); //moved to main
-    [Signal]
-    public delegate void ObjectBuiltEventHandler(string what);
+    [Signal] public delegate void ObjectBuiltEventHandler(string what);
 
     [Export] private BaseMaterial[] allMaterials;
     private Main main;
@@ -141,21 +139,18 @@ public partial class UI : CanvasLayer {
 
     //hud buttons
     private Texture2D tinctureHealthTexture;
-    private Texture2D tinctureHealthTextureBlack;
     private TextureRect tinctureHealthIcon;
     private Label tinctureHealthAmountLabel;
     private ProgressBar tinctureHealthCooldownBar;
     private Label tinctureHealthCooldownLabel;
     
     private Texture2D tinctureSpeedTexture;
-    private Texture2D tinctureSpeedTextureBlack;
     private TextureRect tinctureSpeedIcon;
     private Label tinctureSpeedAmountLabel;
     private ProgressBar tinctureSpeedCooldownBar;
     private Label tinctureSpeedCooldownLabel;
     
     private Texture2D tinctureConcealTexture;
-    private Texture2D tinctureConcealTextureBlack;
     private TextureRect tinctureConcealIcon;
     private Label tinctureConcealAmountLabel;
     private ProgressBar tinctureConcealCooldownBar;
@@ -233,17 +228,26 @@ public partial class UI : CanvasLayer {
             UpdateRadialButtons();
             radialMenu.Visible = true;
             GetTree().Root.SetInputAsHandled();
+            
+            //neither of these work while in full screen
+            // var centerPoint = GetNode<Control>("RadialMenu/CenterPoint");
+            // Input.WarpMouse(centerPoint.GlobalPosition);
+            
+            // var viewportRect = GetViewport().GetVisibleRect();
+            // Vector2 viewportCenter = viewportRect.Size / 2.0f;
+            // GD.Print(viewportCenter);
+            // Input.WarpMouse(viewportCenter);
+            
+            Vector2I windowSize = GetWindow().Size;
+            Vector2 windowCenter = new Vector2(windowSize.X / 2.0f, windowSize.Y / 2.0f);
+            Input.WarpMouse(windowCenter);
         } else {
             if (!radialMenu.Visible) return;
             radialMenu.Visible = false;
             GetTree().Root.SetInputAsHandled();
         }
-
-        // var centerPoint = GetNode<Node2D>("RadialMenu/CenterPoint"); //delete
-        var centerPoint = GetNode<Control>("RadialMenu/CenterPoint");
-        Input.WarpMouse(centerPoint.GlobalPosition);
     }
-    
+
     public void InitializeUIComponents(Main gameMain) {
         main = gameMain;
         main.SucroseChanged += HandleSucroseChanged;
@@ -322,6 +326,7 @@ public partial class UI : CanvasLayer {
         BuildMaterialsSlots();
         BuildAllWeaponStatTooltipsList();
         SetupMenus();
+        LoadShaders();
         //for testing -delete
         // foreach (var material in allMaterials) { 
         //     GD.Print($"{material.Name}: {material.CurrentOwned}");
@@ -336,18 +341,15 @@ public partial class UI : CanvasLayer {
         
         tinctureHealthIcon = GetNode<TextureRect>("WorldHud/Consumables/TinctureHealth/TextureRect");
         tinctureHealthAmountLabel = GetNode<Label>("WorldHud/Consumables/TinctureHealth/Label");
-        tinctureHealthTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-health.png");
-        tinctureHealthTextureBlack = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-health-black.png");
+        tinctureHealthTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-red.png");
         
         tinctureSpeedIcon = GetNode<TextureRect>("WorldHud/Consumables/TinctureSpeed/TextureRect");
         tinctureSpeedAmountLabel = GetNode<Label>("WorldHud/Consumables/TinctureSpeed/Label");
-        tinctureSpeedTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-health.png"); //change to green
-        tinctureSpeedTextureBlack = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-health-black.png");
+        tinctureSpeedTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-green.png");
         
         tinctureConcealIcon = GetNode<TextureRect>("WorldHud/Consumables/TinctureConceal/TextureRect");
         tinctureConcealAmountLabel = GetNode<Label>("WorldHud/Consumables/TinctureConceal/Label");
-        tinctureConcealTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-health.png"); //change to purple
-        tinctureConcealTextureBlack = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-health-black.png");
+        tinctureConcealTexture = ResourceLoader.Load<Texture2D>("res://assets/sprites/tincture-purple.png");
         
         tinctureHealthCooldownBar = GetNode<ProgressBar>("WorldHud/Consumables/TinctureHealth/ProgressBar");
         tinctureHealthCooldownLabel = GetNode<Label>("WorldHud/Consumables/TinctureHealth/ProgressBar/Label");
@@ -364,11 +366,8 @@ public partial class UI : CanvasLayer {
         tinctureConcealCooldownBar.Visible = false;
         tinctureConcealCooldownLabel.Visible = false;
         
-        tinctureHealthIcon.Texture = vars.TinctureHealthAmount > 0 ? tinctureHealthTexture : tinctureHealthTextureBlack;
         tinctureHealthAmountLabel.Text = $"{vars.TinctureHealthAmount}";
-        tinctureSpeedIcon.Texture = vars.TinctureSpeedAmount > 0 ? tinctureSpeedTexture : tinctureSpeedTextureBlack;
         tinctureSpeedAmountLabel.Text = $"{vars.TinctureSpeedAmount}";
-        tinctureConcealIcon.Texture = vars.TinctureConcealAmount > 0 ? tinctureConcealTexture : tinctureConcealTextureBlack;
         tinctureConcealAmountLabel.Text = $"{vars.TinctureConcealAmount}";
         
         // UpdateTinctureHealthButton();
@@ -410,23 +409,71 @@ public partial class UI : CanvasLayer {
     }
 
     public void UpdateTinctureHealthButton() {
-        tinctureHealthIcon.Texture = vars.TinctureHealthAmount > 0 ? tinctureHealthTexture : tinctureHealthTextureBlack;
         tinctureHealthAmountLabel.Text = $"{vars.TinctureHealthAmount}";
         ShowTinctureHealthButtonCooldown();
+        SetTinctureShaderState(tinctureHealthIcon, true);
     }
     
     public void UpdateTinctureSpeedButton() {
-        tinctureSpeedIcon.Texture = vars.TinctureSpeedAmount > 0 ? tinctureSpeedTexture : tinctureSpeedTextureBlack;
         tinctureSpeedAmountLabel.Text = $"{vars.TinctureSpeedAmount}";
         ShowTinctureSpeedButtonCooldown();
+        SetTinctureShaderState(tinctureSpeedIcon, true);
     }
     
     public void UpdateTinctureConcealButton() {
-        tinctureConcealIcon.Texture = vars.TinctureConcealAmount > 0 ? tinctureConcealTexture : tinctureConcealTextureBlack;
         tinctureConcealAmountLabel.Text = $"{vars.TinctureConcealAmount}";
         ShowTinctureConcealButtonCooldown();
+        SetTinctureShaderState(tinctureConcealIcon, true);
     }
 
+    private void LoadShaders() {
+        SetTinctureShaderState(tinctureHealthIcon, false);
+        SetTinctureShaderState(tinctureSpeedIcon, false);
+        SetTinctureShaderState(tinctureConcealIcon, false);
+    }
+    
+ //    private void CheckTinctureShader(string what) { //prev -delete
+ //        var onCooldown = false;
+	// 	var RGBValue = new Vector4(0.0f, 0.0f, 0.0f, 1.0f); //black
+	// 	var flash = 1.0f; //0 = normal pallet, 1 = solid color
+ //        Material material = null;
+ //
+ //        switch (what) {
+ //            case "health":
+ //                if (vars.TinctureHealthCooldown > 0) { onCooldown = true; }
+ //                material = tinctureHealthIcon.Material;
+ //                break;
+ //            case "speed":
+ //                if (vars.TinctureSpeedCooldown > 0) { onCooldown = true; }
+ //                material = tinctureSpeedIcon.Material;
+ //                break;
+ //            case "conceal":
+ //                if (vars.TinctureConcealCooldown > 0) { onCooldown = true; }
+ //                material = tinctureConcealIcon.Material;
+ //                break;
+ //        }
+ //        
+ //        if (!onCooldown) { flash = 0.0f; } //original pallet
+ //        if (onCooldown) { RGBValue = new Vector4(0.0f, 0.0f, 0.0f, 1.0f); } //black
+ //        ((ShaderMaterial)material)?.SetShaderParameter("flashState", flash);
+ //        ((ShaderMaterial)material)?.SetShaderParameter("color", RGBValue);
+	// }
+	
+    private void SetTinctureShaderState(TextureRect icon, bool isOnCooldown) {
+        if (icon.Material is not ShaderMaterial material) return;
+
+        //if on cooldown, flashState is 1 (active), else 0 (inactive)
+        float flashState = isOnCooldown ? 1.0f : 0.0f;
+    
+        material.SetShaderParameter("flashState", flashState);
+    
+        // Only set the color if we are turning it ON. 
+        // If we are turning it off (flashState 0), the color doesn't matter.
+        if (isOnCooldown) {
+            material.SetShaderParameter("color", new Vector4(0, 0, 0, 1));
+        }
+    }
+    
     private void ShowTinctureHealthButtonCooldown() {
         tinctureHealthCooldownBar.MaxValue = vars.TinctureHealthCooldown;
         tinctureHealthCooldownBar.Value = vars.TinctureHealthCooldown;
@@ -458,6 +505,7 @@ public partial class UI : CanvasLayer {
                 tinctureHealthCooldownBar.Value = 0;
                 tinctureHealthCooldownBar.Visible = false;
                 tinctureHealthCooldownLabel.Visible = false;
+                SetTinctureShaderState(tinctureHealthIcon, false);
             }
             else {
                 tinctureHealthCooldownBar.Value = vars.TinctureHealthCooldown;
@@ -469,17 +517,21 @@ public partial class UI : CanvasLayer {
     }
     
     private void UpdateTinctureSpeedCooldown(double delta) {
-        // if (vars.TinctureSpeedCooldown <= 0) { return; } //FIX
-        
         if (vars.TinctureSpeedCooldown > 0) {
             vars.TinctureSpeedCooldown -= delta;
+        
             if (vars.TinctureSpeedCooldown <= 0) {
+                // --- Cooldown / Duration Ended ---
                 vars.TinctureSpeedCooldown = 0;
+            
+                main.SetTinctureSpeedIncrease(0); //reset the speed boost variable here
+            
                 tinctureSpeedCooldownBar.Value = 0;
                 tinctureSpeedCooldownBar.Visible = false;
                 tinctureSpeedCooldownLabel.Visible = false;
-            }
-            else {
+                SetTinctureShaderState(tinctureSpeedIcon, false);
+            } else {
+                // --- Effect is Active ---
                 tinctureSpeedCooldownBar.Value = vars.TinctureSpeedCooldown;
                 double totalSeconds = Math.Ceiling(vars.TinctureSpeedCooldown);
                 int seconds = (int) totalSeconds % 60;
@@ -487,6 +539,26 @@ public partial class UI : CanvasLayer {
             }
         }
     }
+    
+    // private void UpdateTinctureSpeedCooldown(double delta) { //prev -delete
+    //     // if (vars.TinctureSpeedCooldown <= 0) { return; } //FIX
+    //     
+    //     if (vars.TinctureSpeedCooldown > 0) {
+    //         vars.TinctureSpeedCooldown -= delta;
+    //         if (vars.TinctureSpeedCooldown <= 0) {
+    //             vars.TinctureSpeedCooldown = 0;
+    //             tinctureSpeedCooldownBar.Value = 0;
+    //             tinctureSpeedCooldownBar.Visible = false;
+    //             tinctureSpeedCooldownLabel.Visible = false;
+    //             SetTinctureShaderState(tinctureSpeedIcon, false);
+    //         } else {
+    //             tinctureSpeedCooldownBar.Value = vars.TinctureSpeedCooldown;
+    //             double totalSeconds = Math.Ceiling(vars.TinctureSpeedCooldown);
+    //             int seconds = (int) totalSeconds % 60;
+    //             tinctureSpeedCooldownLabel.Text = $"{seconds:D2}";
+    //         }
+    //     }
+    // }
 
     private void UpdateTinctureConcealCooldown(double delta) {
         // if (vars.TinctureConcealCooldown <= 0) { return; } //FIX
@@ -498,15 +570,17 @@ public partial class UI : CanvasLayer {
                 tinctureConcealCooldownBar.Value = 0;
                 tinctureConcealCooldownBar.Visible = false;
                 tinctureConcealCooldownLabel.Visible = false;
+                SetTinctureShaderState(tinctureConcealIcon, false);
             } else {
                 tinctureConcealCooldownBar.Value = vars.TinctureConcealCooldown;
                 double totalSeconds = Math.Ceiling(vars.TinctureConcealCooldown);
 
-                int minutes = (int)totalSeconds / 60;
+                // int minutes = (int)totalSeconds / 60;
                 int seconds = (int)totalSeconds % 60;
 
                 // The "D2" format ensures two digits (e.g., "09" instead of "9")
-                tinctureConcealCooldownLabel.Text = $"{minutes:D2}:{seconds:D2}";
+                // tinctureConcealCooldownLabel.Text = $"{minutes:D2}:{seconds:D2}"; //if using minutes
+                tinctureConcealCooldownLabel.Text = $"{seconds:D2}";
             }
         }
     }

@@ -65,7 +65,6 @@ public partial class Enemy : CharacterBody2D {
         UpdateMelt();
         MeltEnemy();
         
-        
         if (vars.IsSheltered) {
             MoveTowardsHome(delta);
             return;
@@ -76,7 +75,8 @@ public partial class Enemy : CharacterBody2D {
             return;
         }
         
-        MoveAndTrack(delta);
+        Wander(delta);
+        // MoveAndTrack(delta); //uncomment
     }
 
     public void SetThisEnemy(BaseEnemy what) { thisEnemy = what; } //original

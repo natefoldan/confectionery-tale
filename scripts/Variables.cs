@@ -166,11 +166,11 @@ public partial class Variables : Node {
 		// RefinerBuilt = false;
 		// CondenserBuilt = true;
 		// RefinerBuilt = true;
-		// SoftenerOwned = false;
-		// SpreaderOwned = true;
-		// SniperOwned = true;
-		// SlowerOwned = true;
-		// SmasherOwned = true;
+		SoftenerOwned = true;
+		SpreaderOwned = true;
+		SniperOwned = true;
+		SlowerOwned = true;
+		SmasherOwned = true;
 		TinctureHealthAmount = 4;
 		TinctureSpeedAmount = 4;
 		TinctureConcealAmount = 4;

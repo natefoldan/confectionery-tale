@@ -10,7 +10,7 @@ public partial class PlayerCamera : Camera2D {
 	private float currentZoomY;
 
 	// private const float ZOOM_INCREMENT = 0.01f; //origial
-	private const float ZOOM_INCREMENT = 0.1f;
+	private const float ZOOM_INCREMENT = 0.05f;
 	private const float ZOOM_MIN = 0.2f;
 	private const float ZOOM_MAX = 0.4f; 
 	private float zoomLevel = 1.0f;

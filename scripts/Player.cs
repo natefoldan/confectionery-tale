@@ -637,6 +637,8 @@ public partial class Player : CharacterBody2D {
                     default:
                         var normalBullet = bulletScene.Instantiate<Bullet>();
                         normalBullet.SetBulletTexture(currentWeaponData.Texture, main.GetPlayerFinalBulletSize());
+                        if (currentMode == 1) { normalBullet.Scale = new Vector2(5.0f, 5.0f); } //scale the softener bullet
+                        // normalBullet.Scale = Vector2.One; //reset scale when using pooling (not yet implemented)
                         direction = (GetGlobalMousePosition() - Position).Normalized();
                         GetTree().Root.AddChild(normalBullet);
                         var firePoint = GetNode<Node2D>("Sprite2D/FirePoint");
