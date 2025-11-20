@@ -23,6 +23,8 @@ public partial class Player : CharacterBody2D {
     private Sprite2D sprite;
     private int spriteWidth;
     private int spriteHeight;
+
+    private Node2D firePoint;
     // private TextureProgressBar reloadBar; //keep for option to set bar above player
     // private TextureProgressBar healthBar; //keep for option to set bar above player
     // private TextureProgressBar shieldBar; //keep for option to set bar above player
@@ -42,8 +44,7 @@ public partial class Player : CharacterBody2D {
     private Vector2I currentTileCoord;
     private Vector2 teleportDestination;
     private string assignmentToGive;
-
-    private bool showCutsceneOnArrival = false; //delete
+    private bool triggerHeld = false;
     
     private readonly Color concealedColor = new Color(1, 1, 1, 0.4f);
     private readonly Color visibleColor = new Color(1, 1, 1, 1);
@@ -99,6 +100,7 @@ public partial class Player : CharacterBody2D {
         tooltips = GetNode<TooltipHandler>("/root/TooltipHandler");
         popupTextScene = GD.Load<PackedScene>("res://scenes/popup_text.tscn");
         sprite = GetNode<Sprite2D>("Sprite2D");
+        firePoint = GetNode<Node2D>("Sprite2D/FirePoint");
         spriteWidth = sprite.Texture.GetWidth();
         spriteHeight = sprite.Texture.GetHeight();
         animationPlayer = GetNode<AnimationPlayer>("AnimationPlayer");
@@ -491,10 +493,26 @@ public partial class Player : CharacterBody2D {
         currentShield = main.GetPlayerFinalShield();
         ui.UpdateShieldBar(main.GetPlayerFinalShield());
     }
-    
+
     public override void _UnhandledInput(InputEvent @event) {
         if (Input.IsKeyPressed(Key.Shift)) { return; } //shift + scroll wheel zooms map
     
+        
+        //this only runs if the UI *did not* consume the click
+        if (@event.IsActionPressed("fire_primary")) {
+            triggerHeld = true;
+            GetTree().Root.SetInputAsHandled();
+        } else if (@event.IsActionReleased("fire_primary")) {
+            triggerHeld = false;
+        }
+        
+        //if RMB is just pressed, toggle vars.AutoFire state
+        if (Input.IsActionJustPressed("fire_alternate")) {
+            vars.AutoFire = !vars.AutoFire;
+            GetTree().GetRoot().SetInputAsHandled();
+            // return; //stop processing this event
+        }
+        
         //handle Weapon Swapping actions
         if (Input.IsActionPressed("swap_fire_mode_down")) {
             SwitchWeaponWithMouseWheel(1);
@@ -514,23 +532,24 @@ public partial class Player : CharacterBody2D {
         if (Input.IsActionPressed("select_gun_five")) { main.EquipWeapon(4); GetTree().GetRoot().SetInputAsHandled(); return; }
         if (Input.IsActionPressed("select_gun_six")) { main.EquipWeapon(5); GetTree().GetRoot().SetInputAsHandled(); return; }
         
-        //if RMB is just pressed, toggle vars.AutoFire state
-        if (Input.IsActionJustPressed("fire_alternate")) {
-            vars.AutoFire = !vars.AutoFire;
-            // GD.Print($"Autofire toggled: {vars.AutoFire}");
-            GetTree().GetRoot().SetInputAsHandled(); //consume the input
-            return; //stop processing this event
-        }
+        // //if RMB is just pressed, toggle vars.AutoFire state
+        // if (Input.IsActionJustPressed("fire_alternate")) { //MOVED UP TOP
+        //     vars.AutoFire = !vars.AutoFire;
+        //     // GD.Print($"Autofire toggled: {vars.AutoFire}");
+        //     GetTree().GetRoot().SetInputAsHandled(); //consume the input
+        //     return; //stop processing this event
+        // }
+        
         // Since LMB is NOT in Input Map, we must check the raw mouse button event.
         // This is crucial to ensure UI buttons don't get the click when it's for firing.
-        if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.ButtonIndex == MouseButton.Left) {
-            //if it's a press (and not an echo from holding)
-            if (mouseButtonEvent.IsPressed() && !mouseButtonEvent.IsEcho()) {
-                //this LMB click is for the player's firing action, so consume it
-                GetTree().GetRoot().SetInputAsHandled();
-                //no return here, as we still need the IsActionPressed("fire") check in HandleFiring to work based on the general state of the button being held.
-            }
-        }
+        // if (@event is InputEventMouseButton mouseButtonEvent && mouseButtonEvent.ButtonIndex == MouseButton.Left) { //ORIGINAL WORKS
+        //     //if it's a press (and not an echo from holding)
+        //     if (mouseButtonEvent.IsPressed() && !mouseButtonEvent.IsEcho()) {
+        //         //this LMB click is for the player's firing action, so consume it
+        //         GetTree().GetRoot().SetInputAsHandled();
+        //         //no return here, as we still need the IsActionPressed("fire") check in HandleFiring to work based on the general state of the button being held.
+        //     }
+        // }
         
         if (Input.IsActionJustPressed("interact_with")) {
             if (vars.CurrentWorldObject == null) { return; }
@@ -549,8 +568,18 @@ public partial class Player : CharacterBody2D {
                     return;
             }
             
+            
+            // var objectType = main.GetWorldObjectById(objectId).ObjectType; //-delete
+            
             //one time collectables
-            var objectType = main.GetWorldObjectById(objectId).ObjectType;
+            var worldObjectData = main.GetWorldObjectById(objectId);
+            if (worldObjectData == null) {
+                GD.PushError($"Failed to find data for object: {objectId}");
+                return; 
+            }
+
+            var objectType = worldObjectData.ObjectType;
+            
             var collectedItem = false;
             
             switch (objectType) {
@@ -607,13 +636,12 @@ public partial class Player : CharacterBody2D {
         //determine if player *intends* to fire based on auto-fire state and current input
         bool playerIntendsToFire = false;
         if (vars.AutoFire) {
-            // If autofire is ON, player intends to fire continuously.
-            // The gun will fire at its rate even if LMB is NOT held.
-            playerIntendsToFire = true;
+            playerIntendsToFire = true; //auto fire
         } else {
-            // If autofire is OFF, player intends to fire only if LMB is currently held down.
-            playerIntendsToFire = Input.IsMouseButtonPressed(MouseButton.Left); // Directly check raw LMB state
-            // playerShooting = true;
+            //if autofire is OFF, player intends to fire only if LMB is currently held down
+            // playerIntendsToFire = Input.IsMouseButtonPressed(MouseButton.Left); // Directly check raw LMB state //ORIGINAL WORKS
+            // Instead of polling hardware (which ignores UI), we check our gated bool
+            playerIntendsToFire = triggerHeld;
         }
 
         playerShooting = playerIntendsToFire;
@@ -641,7 +669,6 @@ public partial class Player : CharacterBody2D {
                         // normalBullet.Scale = Vector2.One; //reset scale when using pooling (not yet implemented)
                         direction = (GetGlobalMousePosition() - Position).Normalized();
                         GetTree().Root.AddChild(normalBullet);
-                        var firePoint = GetNode<Node2D>("Sprite2D/FirePoint");
                         normalBullet.SetupMouseBullet(firePoint.GlobalPosition, direction);
                         break;
                 }
@@ -660,44 +687,79 @@ public partial class Player : CharacterBody2D {
             GD.PushError("BulletScene is not assigned!");
             return;
         }
-        var firePoint = GetNode<Node2D>("Sprite2D/FirePoint");
-        if (firePoint == null) {
-            GD.PushError("FirePoint not found");
-            return;
-        }
-    
-        int numberOfBullets = main.GetPlayerFinalBulletAmount();
-    
-        // Set a total spread angle. You can make this an exported variable too.
-        float totalSpreadAngleDegrees = 30.0f; 
 
+        int numberOfBullets = main.GetPlayerFinalBulletAmount();
+        float totalSpreadAngleDegrees = 30.0f; 
+    
+        // 1. Get the base direction (Mouse - FirePoint)
         Vector2 baseDirection = (GetGlobalMousePosition() - firePoint.GlobalPosition).Normalized();
-        float baseAngleRad = baseDirection.Angle();
+
+        // 2. Calculate the start angle offset (half the total spread to the left)
+        float halfSpreadRad = Mathf.DegToRad(totalSpreadAngleDegrees / 2.0f);
     
-        //calculate the angle between each bullet
-        float angleStepRad = Mathf.DegToRad(totalSpreadAngleDegrees);
-        if (numberOfBullets > 1) {
-            angleStepRad /= (numberOfBullets - 1);
-        }
-    
-        // Calculate the starting angle for the first bullet
-        float startAngleRad = baseAngleRad - (Mathf.DegToRad(totalSpreadAngleDegrees) / 2.0f);
-    
-        //fire each bullet dynamically
+        // 3. Calculate the step between bullets
+        // Avoid division by zero if numberOfBullets is 1
+        float angleStepRad = numberOfBullets > 1 ? Mathf.DegToRad(totalSpreadAngleDegrees) / (numberOfBullets - 1) : 0;
+
+        // 4. Fire Loop
         for (int i = 0; i < numberOfBullets; i++) {
             var instantiatedBullet = bulletScene.Instantiate<Bullet>();
             instantiatedBullet.SetBulletTexture(currentWeaponData.Texture, main.GetPlayerFinalBulletSize());
-        
-            //calculate the specific angle for this bullet
-            float currentAngleRad = startAngleRad + (angleStepRad * i);
-        
-            // Create the direction vector from the angle
-            Vector2 bulletDirection = new Vector2(Mathf.Cos(currentAngleRad), Mathf.Sin(currentAngleRad));
+
+            // THE UPGRADE: Vector Rotation
+            // Instead of calculating Cos/Sin manually:
+            // Start at baseDirection -> Rotate "Left" by half spread -> Rotate "Right" by step * i
+            float currentRotation = -halfSpreadRad + (angleStepRad * i);
+            Vector2 bulletDirection = baseDirection.Rotated(currentRotation);
 
             GetTree().Root.AddChild(instantiatedBullet);
-            instantiatedBullet.SetupMouseBullet(firePoint.GlobalPosition, bulletDirection.Normalized());
+            instantiatedBullet.SetupMouseBullet(firePoint.GlobalPosition, bulletDirection);
         }
     }
+    
+    // private void FireSpreadShot() { //delete
+    //     if (bulletScene == null) {
+    //         GD.PushError("BulletScene is not assigned!");
+    //         return;
+    //     }
+    //     // var firePoint = GetNode<Node2D>("Sprite2D/FirePoint"); //delete
+    //     if (firePoint == null) {
+    //         GD.PushError("FirePoint not found");
+    //         return;
+    //     }
+    //
+    //     int numberOfBullets = main.GetPlayerFinalBulletAmount();
+    //
+    //     // Set a total spread angle. You can make this an exported variable too.
+    //     float totalSpreadAngleDegrees = 30.0f; 
+    //
+    //     Vector2 baseDirection = (GetGlobalMousePosition() - firePoint.GlobalPosition).Normalized();
+    //     float baseAngleRad = baseDirection.Angle();
+    //
+    //     //calculate the angle between each bullet
+    //     float angleStepRad = Mathf.DegToRad(totalSpreadAngleDegrees);
+    //     if (numberOfBullets > 1) {
+    //         angleStepRad /= (numberOfBullets - 1);
+    //     }
+    //
+    //     // Calculate the starting angle for the first bullet
+    //     float startAngleRad = baseAngleRad - (Mathf.DegToRad(totalSpreadAngleDegrees) / 2.0f);
+    //
+    //     //fire each bullet dynamically
+    //     for (int i = 0; i < numberOfBullets; i++) {
+    //         var instantiatedBullet = bulletScene.Instantiate<Bullet>();
+    //         instantiatedBullet.SetBulletTexture(currentWeaponData.Texture, main.GetPlayerFinalBulletSize());
+    //     
+    //         //calculate the specific angle for this bullet
+    //         float currentAngleRad = startAngleRad + (angleStepRad * i);
+    //     
+    //         // Create the direction vector from the angle
+    //         Vector2 bulletDirection = new Vector2(Mathf.Cos(currentAngleRad), Mathf.Sin(currentAngleRad));
+    //
+    //         GetTree().Root.AddChild(instantiatedBullet);
+    //         instantiatedBullet.SetupMouseBullet(firePoint.GlobalPosition, bulletDirection.Normalized());
+    //     }
+    // }
     
     private void PlayerMovement() {
         direction = Input.GetVector("move_left", "move_right", "move_up", "move_down");

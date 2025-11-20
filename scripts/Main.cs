@@ -29,9 +29,11 @@ public partial class Main : Node2D {
 	
 	private Sprite2D playerSpawnPortal;
 	private StaticBody2D shelterPlain;
-	private StaticBody2D shelterGrove;
+	private StaticBody2D shelterCake;
+	private StaticBody2D shelterWoods;
 	private Shelter shelterPlainScript;
-	private Shelter shelterGroveScript;
+	private Shelter shelterCakeScript;
+	private Shelter shelterWoodsScript;
 	private List<Shelter> allShelters;
 	private List<WorldObject> allWorldObjects;
 	private List<Node2D> placementCollisions = new List<Node2D>();
@@ -194,7 +196,8 @@ public partial class Main : Node2D {
     
     private void GetAllShelters() {
 	    shelterPlain = GetNode<StaticBody2D>("World/ShelterPlain");
-		// shelterGrove = GetNode<StaticBody2D>("World/ShelterGrove");
+		shelterCake = GetNode<StaticBody2D>("World/ShelterCake");
+		shelterWoods = GetNode<StaticBody2D>("World/ShelterWoods");
 		
 		allShelters = new List<Shelter>();
 		
@@ -203,10 +206,15 @@ public partial class Main : Node2D {
 			allShelters.Add(shelterPlainScript);
 		}
 		
-		// if (shelterGrove is Shelter groveScriptInstance) {
-		// 	shelterGroveScript = groveScriptInstance;
-		// 	allShelters.Add(shelterGroveScript);
-		// }
+		if (shelterCake is Shelter cakeScriptInstance) {
+			shelterCakeScript = cakeScriptInstance;
+			allShelters.Add(shelterCakeScript);
+		}
+		
+		if (shelterWoods is Shelter woodsScriptInstance) {
+			shelterWoodsScript = woodsScriptInstance;
+			allShelters.Add(shelterWoodsScript);
+		}
 		
 		foreach (var s in allShelters) {
 			s.SetUI(ui);
@@ -412,6 +420,9 @@ public partial class Main : Node2D {
 		//multiply tile coord by 256
 		player.SetPos(new Vector2(27560, 59680)); //52 116 -test start
 		// player.SetPos(new Vector2(-21600, 122400)); //-45, 255 -training area
+		// player.SetPos(new Vector2(122880, 47616)); //480, 186 cake
+		// player.SetPos(new Vector2(245760, 138240)); //960 540 bottom right corner
+		
 		playerCamera = player.GetPlayerCamera();
 		// main.SucroseChanged += HandleSucroseChanged;
 		player.ShelteredChanged += HandleShelteredChanged;
@@ -460,29 +471,26 @@ public partial class Main : Node2D {
 		
 		switch (where) {
 			case "startingSpot": //RENAME (use capitals)
-				// GetTree().Paused = true; //too complicated to use
 				vars.CutsceneActive = true;
 				whatAssignment = "MA01";
 				var start = GetNode<Node2D>("World/PlayerSpawnPointOne");
 				globalTravelPoint = start.GetPosition();
 				
-				// Tell the player to start the cutscene, passing the destination.
+				//tell the player to start the cutscene, passing the destination.
 				player.StartTeleportCutscene(globalTravelPoint, whatAssignment);
-				// player.StartTeleportCutscene(textCutsceneScene, globalTravelPoint, whatAssignment); //delete
-				// playTween = true; //original -delete
 				break;
 			case "plain":
 				globalTravelPoint = shelterPlainScript.ToGlobal(shelterPlainScript.GetTravelPoint()); 
-				shelterPlainScript.SwapToInterior(); //DON'T DO IT LIKE THIS -delete
 				break;
-			case "grove":
-				globalTravelPoint = shelterGroveScript.ToGlobal(shelterGroveScript.GetTravelPoint()); 
-				shelterGroveScript.SwapToInterior(); //DON'T DO IT LIKE THIS -delete
+			case "cake":
+				globalTravelPoint = shelterCakeScript.ToGlobal(shelterCakeScript.GetTravelPoint()); 
+				break;
+			case "woods":
+				globalTravelPoint = shelterWoodsScript.ToGlobal(shelterWoodsScript.GetTravelPoint()); 
 				break;
 		}
 		player.SetPos(globalTravelPoint);
 		ui.CloseWorldMap();
-		// if (playTween) { player.TeleportAnimation(whatAssignment); } //original -delete
 	}
 	
 	public void EnemyCollidedWithPlayer(BaseEnemy enemy) {
@@ -746,6 +754,7 @@ public partial class Main : Node2D {
 	}
 
 	private int GetTinctureSpeed() {
+		return 2000;
 		return vars.SkillCraftingLevel * tinctureSpeedIncrease;
 	}
 

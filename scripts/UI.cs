@@ -1776,31 +1776,25 @@ public partial class UI : CanvasLayer {
     private void SetWorldMapIcons() {
         var playerMarker = GetNode<AnimatedSprite2D>("WorldMap/PlayerMarker");
         var playerPos = main.GetPlayerPosition();
-        // var translatedPosition = new Vector2I((int) Math.Ceiling(playerPos.X / 85), (int) Math.Ceiling(playerPos.Y / 85));
-        // translatedPosition = new Vector2I(4, 113); //x 4
-        // var translatedPosition = new Vector2(16, 254f);
-        // playerMarker.SetPosition(translatedPosition);
-        
-        var playerPosX = playerPos.X;
-        var playerPosY = playerPos.Y;
-        var mapPosX = playerPosX * (1.0f / 120.0f);
-        var mapPosY = playerPosY * (1.0f / 120.0f);
-        
-        playerMarker.SetPosition(new  Vector2(mapPosX, mapPosY));
 
-        //tile size: 24px base tile * 20 scale = 480px/tile
-        //world width: 480 tiles * 480 tile size = 230400
-        //world height: 270 tiles * 480 tile size = 129600
+        // 1. Define your known World Size (Width in Pixels)
+        // You can calculate this dynamically: 960 tiles * 256 pixels
+        float worldWidth = 245760.0f; 
+        float worldHeight = 138240.0f;
 
-        //conversion ration on 1920x1080 map
-        //x: 1920 / 230,400 = 1 / 120
-        //y: 1080 / 129,600 = 1 / 120
-        //120
+        // 2. Define your Map Size (UI Size)
+        // If the map fills the screen, use the viewport size.
+        // Vector2 mapSize = new Vector2(1920, 1080);
+        Vector2 mapSize = GetViewport().GetVisibleRect().Size;
 
-        //translate world position
-        //actual position (1920, 30510)
-        //map Position X: 1920 * (1 / 120) = 16
-        //map Position Y: 30510 * (1 / 120) = 254.25
+        // 3. Calculate the Ratio dynamically
+        // We verify both X and Y to ensure the aspect ratio isn't stretched
+        float ratioX = mapSize.X / worldWidth;  // 1920 / 245760 = 0.0078125 (approx 1/128)
+        float ratioY = mapSize.Y / worldHeight; // 1080 / 138240 = 0.0078125
+
+        // 4. Apply Position
+        // Simply multiply the world position by the ratio
+        playerMarker.Position = new Vector2(playerPos.X * ratioX, playerPos.Y * ratioY);
     }
     
     private void OpenMainMenu() {

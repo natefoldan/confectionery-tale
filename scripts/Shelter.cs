@@ -6,25 +6,42 @@ public partial class Shelter : StaticBody2D {
     [Export] private bool hasDistillery;
     private Variables vars;
     private UI ui;
-    private string name = "shelterone";
     private Sprite2D exterior;
     private Sprite2D interior;
+    private Sprite2D threshold;
     private Control distillery;
     
     public override void _Ready() {
         SetupShelter();
         SetupDistillery();
+        
+        //connect the signal from variables
+        vars.ShelteredStateChanged += OnShelteredStateChanged;
     }
 
+    //CLEANUP (Crucial for game stability)
+    public override void _ExitTree() {
+        if (vars != null) {
+            vars.ShelteredStateChanged -= OnShelteredStateChanged;
+        }
+    }
+    
+    private void OnShelteredStateChanged() {
+        if (vars.IsSheltered) {
+            SwapToInterior();
+        } else {
+            SwapToExterior();
+        }
+    }
+    
     private void SetupShelter() {
         vars = GetNode<Variables>("/root/Variables");
         exterior = GetNode<Sprite2D>("Exterior");
         interior = GetNode<Sprite2D>("Interior");
-
+        threshold = GetNode<Sprite2D>("Threshold");
+        
         if (vars.IsSheltered) { SwapToInterior(); }
         else { SwapToExterior(); }
-        // interior.Visible = false; //delete
-        // GD.Print($"setup interior visible: {interior.Visible} exterior: {exterior.Visible}");
     }
 
     private void SetupDistillery() {
@@ -38,12 +55,8 @@ public partial class Shelter : StaticBody2D {
         ui.ObjectBuilt += HandleObjectBuilt;
     }
     
-    public string GetShelterName() {
-        return name;
-    }
-
     public Vector2 GetTravelPoint() {
-        return GetNode<Node2D>("TravelPoint").GetPosition();
+        return GetNode<Node2D>("TeleportPoint").GetPosition();
     }
     
     private void HandleObjectBuilt(string what) {
@@ -59,22 +72,14 @@ public partial class Shelter : StaticBody2D {
     public void SwapToInterior() {
         interior.Visible = true;
         exterior.Visible = false;
-        GetNode<Sprite2D>("Threshold").Visible = true;
-        // GD.Print($"interior visible: {interior.Visible} exterior: {exterior.Visible}");
+        threshold.Visible = true;
+        // GD.Print($"interior: {interior.Visible} exterior: {exterior.Visible}");
     }
     
     public void SwapToExterior() {
         exterior.Visible = true;
         interior.Visible = false;
-        GetNode<Sprite2D>("Threshold").Visible = false;
-        // GD.Print($"interior visible: {interior.Visible} exterior: {exterior.Visible}");
-    }
-    
-    private void EnteredShelter(Area2D area) {
-        GD.Print("entered");
-    }
-    
-    private void ExitedShelter(Area2D area) {
-        GD.Print("exited");
+        threshold.Visible = false;
+        // GD.Print($"interior: {interior.Visible} exterior: {exterior.Visible}");
     }
 }
